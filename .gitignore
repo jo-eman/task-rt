@@ -14,3 +14,6 @@ Cargo.lock
 *.pdb
 
 .DS_Store
+
+# ignore executable copied from release folder to level above , into the rust project folder
+rt/rt
