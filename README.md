@@ -30,7 +30,7 @@ up 0 1 0
 
 ## Light file example . The comments after `#` are ignored
 ```
-# it will be a point light , and the "power" is custom implementation of brightness control
+# a point light custom implementation of brightness control
 power 255
 color 255 255 255
 from 0 0 0
