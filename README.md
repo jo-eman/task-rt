@@ -2,7 +2,7 @@
 grit:lab Åland Islands 2023
 
 ## Build
-```bash
+```
 ./do
 ```
 
@@ -14,7 +14,7 @@ One camera file, one light file and one objects file are required.
 The order of the files is important.  
 
 ## Example
-```bash
+```
 ./rt use/camera1 use/light1 use/objects1
 ```
 
