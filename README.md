@@ -18,7 +18,7 @@ The order of the files is important.
 ./rt use/camera1 use/light1 use/objects1
 ```
 
-## Camera file example
+## Camera file example . The comments after `#` are ignored
 ```
 # output file name, width in pixels, height in pixels
 out.ppm 800 600
@@ -28,7 +28,7 @@ to 0 0 1
 up 0 1 0
 ```
 
-## Light file example . The commends after # are ignored
+## Light file example . The comments after `#` are ignored
 ```
 # it will be a point light , and the "power" is custom implementation of brightness control
 power 255
@@ -36,7 +36,7 @@ color 255 255 255
 from 0 0 0
 ```
 
-## Objects file example . The commends after # are ignored
+## Objects file example . The comments after `#` are ignored
 ```
 # sphere: color coordinates radius
 # cube: color coordinates size
