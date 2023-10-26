@@ -20,6 +20,7 @@ The order of the files is important.
 
 ## Camera file example
 ```
+# output file name, width in pixels, height in pixels
 out.ppm 800 600
 view 90
 from 0 0 0
