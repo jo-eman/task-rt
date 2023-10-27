@@ -15,5 +15,8 @@ Cargo.lock
 
 .DS_Store
 
+# ignore vscode settings
+.vscode/
+
 # ignore executable copied from release folder to level above , into the rust project folder
 rt/rt
