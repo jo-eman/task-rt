@@ -1,0 +1,9 @@
+# sphere: color, coordinates, radius
+# cube: color, coordinates, size
+# roll: color, coordinates, radius, height. it is like cylinder short name
+# flat: color, coordinates, normal vector from zero point of the global coordinates
+255 255 0 sphere 0 0 5 2
+0 255 255 cube 0 0 0 2
+255 0 255 roll 0 0 0 2 2
+0 255 0 flat 0 0 0 0 0 1
+200 255 255 cube 1 1 1 3

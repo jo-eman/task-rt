@@ -1,25 +1,47 @@
 mod parser {
   pub mod camera_file;
+  pub mod light_file;
+  pub mod objects_file;
 }
 
 use std::env;
 use std::process;
-use parser::camera_file::parse_camera_file;
+use parser::camera_file::Camera;
+use parser::light_file::Light;
+use parser::objects_file::Objects;
 
 fn main() {
   let args: Vec<String> = env::args().collect();
-  if args.len() != 2 {
-      eprintln!("Usage: {} <camerafile>", args[0]);
-      process::exit(1);
+  if args.len() != 4 {
+    println!("Usage: ./we <camera_file> <light_file> <objects_file>");
+    process::exit(1);
   }
-
+  
   let camera_file = &args[1];
-  let camera = match parse_camera_file(camera_file) {
-      Ok(camera) => camera,
-      Err(error) => {
-          panic!("Problem parsing the camera file: {}", error);
-      }
+  let camera = match Camera::parse_from_file(camera_file) {
+    Ok(camera) => camera,
+    Err(error) => {
+      panic!("Problem parsing the camera file: {}", error);
+    }
   };
-
+  
+  let light_file = &args[2];
+  let light = match Light::parse_from_file(light_file) {
+    Ok(light) => light,
+    Err(error) => {
+      panic!("Problem parsing the light file: {}", error);
+    }
+  };
+  
+  let objects_file = &args[3];
+  let objects = match Objects::parse_from_file(objects_file) {
+    Ok(objects) => objects,
+    Err(error) => {
+      panic!("Problem parsing the objects file: {}", error);
+    }
+  };
+  
   println!("Camera: {:?}", camera);
+  println!("Light: {:?}", light);
+  println!("Objects: {:?}", objects);
 }
