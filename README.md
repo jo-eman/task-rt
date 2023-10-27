@@ -8,20 +8,20 @@ grit:lab Åland Islands 2023
 
 ## Run
 ```
-./rt [camera file] [light file] [objects file]
+./we [camera file] [light file] [objects file]
 ```
 One camera file, one light file and one objects file are required.  
 The order of the files is important.  
 
 ## Example
 ```
-./rt use/camera1 use/light1 use/objects1
+./we use/camera1 use/light1 use/objects1
 ```
 
 ## Camera file example . The comments after `#` are ignored
 ```
-# output file name, width in pixels, height in pixels
-out.ppm 800 600
+# result image width in pixels, height in pixels, output file name without extension
+800 600 output_file
 view 90
 from 0 0 0
 to 0 0 1
