@@ -1,41 +1,32 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-const MAX_OUTPUT_PICTURE_SIDE_SIZE: i32 = 10000;
+const MAX_OUTPUT_PICTURE_SIDE_SIZE: i32 = 1024;
 
 #[derive(Debug)]
 pub struct Camera {
   pub width: i32,
   pub height: i32,
   pub output_file_name: String,
-  pub view_angle: i32,
-  pub position: [i32; 3],
-  pub look_at: [i32; 3],
-  pub up: [i32; 3],
+  pub zoom: usize, // displacement of rays start point from camera position to back
+  pub position: [f64; 3],
+  pub look_at: [f64; 3], // point in the front of the camera, to build camera vector
+  pub up: [f64; 3],
 }
 impl Camera {
   pub fn parse_from_file(file_path: &str) -> Result<Camera, String> {
     let file = File::open(file_path).map_err(|e| e.to_string())?;
     let reader = BufReader::new(file);
-    // let mut camera = Camera {
-    //   width: 0,
-    //   height: 0,
-    //   output_file_name: "".to_string(),
-    //   view_angle: 0,
-    //   position: [0; 3],
-    //   look_at: [0; 3],
-    //   up: [0; 3],
-    // };
-
+    
     let mut width = 0;
     let mut height = 0;
     let mut output_file_name = "".to_string();
-    let mut view_angle = 0;
-    let mut position = [0; 3];
-    let mut look_at = [0; 3];
-    let mut up = [0; 3];
+    let mut zoom = 0;
+    let mut position = [0f64; 3];
+    let mut look_at = [0f64; 3];
+    let mut up = [0f64; 3];
 
-    let mut view_parsed = false;
+    let mut zoom_parsed = false;
     let mut from_parsed = false;
     let mut to_parsed = false;
     let mut up_parsed = false;
@@ -48,36 +39,36 @@ impl Camera {
         continue;
       }
       match words[0] {
-        "view" if !view_parsed && words.len() == 2 => {
-          view_angle = words[1].parse::<i32>().map_err(|_| {
-            "View angle must be an integer between 1 and 120".to_string()
+        "zoom" if !zoom_parsed && words.len() == 2 => {
+          zoom = words[1].parse::<usize>().map_err(|_| {
+            "Zoom must be greater than zero".to_string()
           })?;
-          if view_angle < 10 || view_angle > 120 {
-            return Err("View angle must be an integer between 10 and 120".to_string());
+          if zoom < 1 || zoom > usize::MAX {
+            return Err("Zoom must be between 1 and 18446744073709551615".to_string());
           }
-          view_parsed = true;
+          zoom_parsed = true;
         }
         "from" if !from_parsed && words.len() == 4 => {
           position = [
-          words[1].parse::<i32>().map_err(|_| "Position must be an integer".to_string())?,
-          words[2].parse::<i32>().map_err(|_| "Position must be an integer".to_string())?,
-          words[3].parse::<i32>().map_err(|_| "Position must be an integer".to_string())?,
+          words[1].parse::<f64>().map_err(|_| "Position x must be an integer".to_string())?,
+          words[2].parse::<f64>().map_err(|_| "Position y must be an integer".to_string())?,
+          words[3].parse::<f64>().map_err(|_| "Position z must be an integer".to_string())?,
           ];
           from_parsed = true;
         }
         "to" if !to_parsed && words.len() == 4 => {
           look_at = [
-          words[1].parse::<i32>().map_err(|_| "Look at point must be an integer".to_string())?,
-          words[2].parse::<i32>().map_err(|_| "Look at point must be an integer".to_string())?,
-          words[3].parse::<i32>().map_err(|_| "Look at point must be an integer".to_string())?,
+          words[1].parse::<f64>().map_err(|_| "to x must be an integer".to_string())?,
+          words[2].parse::<f64>().map_err(|_| "to y must be an integer".to_string())?,
+          words[3].parse::<f64>().map_err(|_| "to z must be an integer".to_string())?,
           ];
           to_parsed = true;
         }
         "up" if !up_parsed && words.len() == 4 => {
           up = [
-          words[1].parse::<i32>().map_err(|_| "Up vector must be an integer".to_string())?,
-          words[2].parse::<i32>().map_err(|_| "Up vector must be an integer".to_string())?,
-          words[3].parse::<i32>().map_err(|_| "Up vector must be an integer".to_string())?,
+          words[1].parse::<f64>().map_err(|_| "Up vector x must be an integer".to_string())?,
+          words[2].parse::<f64>().map_err(|_| "Up vector y must be an integer".to_string())?,
+          words[3].parse::<f64>().map_err(|_| "Up vector z must be an integer".to_string())?,
           ];
           up_parsed = true;
         }
@@ -112,8 +103,8 @@ impl Camera {
         }
       }
     }
-    if !view_parsed {
-      return Err("Camera view angle [view 10-120] not specified".to_string());
+    if !zoom_parsed {
+      return Err("Camera zoom [1-18446744073709551615] not specified".to_string());
     }
     if !from_parsed {
       return Err("Camera position [from x y z] not specified".to_string());
@@ -125,11 +116,11 @@ impl Camera {
       return Err("Up vector end point [up x y z] not specified".to_string());
     }
     if !output_parsed {
-      return Err("Output file [width height filename] not specified".to_string());
+      return Err("Output file [width height name] not specified".to_string());
     }
 
     let camera = Camera {
-      width, height, output_file_name, view_angle, position, look_at, up
+      width, height, output_file_name, zoom, position, look_at, up
     };
 
     Ok(camera)

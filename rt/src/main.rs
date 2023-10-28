@@ -1,3 +1,6 @@
+mod gem;
+use gem::gem::Gem; /* wtf rust. w...t...f */
+
 mod parser {
   pub mod camera_file;
   pub mod light_file;
@@ -6,6 +9,7 @@ mod parser {
 
 mod tracer {
   pub mod scene;
+  pub mod trace;
 }
 
 mod printer {

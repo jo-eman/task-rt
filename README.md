@@ -21,12 +21,12 @@ The order of the files is important.
 ## Camera file example . The comments after `#` are ignored
 ```
 # result image width in pixels, height in pixels, output file name without extension
-# view angle in degrees. field of view of the camera
-# from: x y z coordinates of the camera
+# zoom: distance against the camera vector (from camera position)
+# from: x y z coordinates of the camera (center of rectangle area of pixels)
 # to: x y z coordinates of the point the camera is looking at. To build vector
 # up: x y z coordinates of the end of up vector of the camera. To build vector
 800 600 output_file
-view 90
+zoom 900
 from 0 0 0
 to 0 0 1
 up 0 1 0

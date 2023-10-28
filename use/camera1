@@ -1,6 +1,6 @@
 # result image width in pixels, height in pixels, output file name
 200 150 output
-view 90
+zoom 250
 from 0 0 0
 to 0 0 1
 up 0 1 0
