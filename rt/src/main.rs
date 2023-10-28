@@ -4,11 +4,20 @@ mod parser {
   pub mod objects_file;
 }
 
+mod tracer {
+  pub mod scene;
+}
+
+mod printer {
+  pub mod ppm;
+}
+
 use std::env;
 use std::process;
 use parser::camera_file::Camera;
 use parser::light_file::Light;
 use parser::objects_file::Objects;
+use printer::ppm::generate_ppm_file;
 
 fn main() {
   let args: Vec<String> = env::args().collect();
@@ -44,4 +53,14 @@ fn main() {
   println!("Camera: {:?}", camera);
   println!("Light: {:?}", light);
   println!("Objects: {:?}", objects);
+
+  let scene = tracer::scene::Scene::new(camera, light, objects);
+  
+  generate_ppm_file(
+    scene.camera.width as u32,
+    scene.camera.height as u32, 
+    &scene.camera.output_file_name, 
+    &scene.trace()
+  ).unwrap();
+  
 }

@@ -18,5 +18,8 @@ Cargo.lock
 # ignore vscode settings
 .vscode/
 
-# ignore executable copied from release folder to level above , into the rust project folder
-rt/rt
+# ignore folder includes output image after trace
+ppm/
+
+# ignore executable copied from release folder to root level
+we

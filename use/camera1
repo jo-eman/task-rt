@@ -1,5 +1,5 @@
 # result image width in pixels, height in pixels, output file name
-800 600 output
+200 150 output
 view 90
 from 0 0 0
 to 0 0 1

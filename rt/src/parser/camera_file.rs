@@ -5,13 +5,13 @@ const MAX_OUTPUT_PICTURE_SIDE_SIZE: i32 = 10000;
 
 #[derive(Debug)]
 pub struct Camera {
-  width: i32,
-  height: i32,
-  output_file_name: String,
-  view_angle: i32,
-  position: [i32; 3],
-  look_at: [i32; 3],
-  up: [i32; 3],
+  pub width: i32,
+  pub height: i32,
+  pub output_file_name: String,
+  pub view_angle: i32,
+  pub position: [i32; 3],
+  pub look_at: [i32; 3],
+  pub up: [i32; 3],
 }
 impl Camera {
   pub fn parse_from_file(file_path: &str) -> Result<Camera, String> {
