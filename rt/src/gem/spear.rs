@@ -63,5 +63,24 @@ impl Spear {
     unit_other.y == -unit_self.y &&
     unit_other.z == -unit_self.z
   }
+
+  /** check the vector is same directed */
+  pub fn is_same(&self, other: &Spear) -> bool {
+    let unit_other = other.unit();
+    let unit_self = self.unit();
+    unit_other.x == unit_self.x &&
+    unit_other.y == unit_self.y &&
+    unit_other.z == unit_self.z
+  }
+
+  /** check the vector is parallel */
+  pub fn is_ll(&self, other: &Spear) -> bool {
+    self.is_same(other) || self.is_back(other)
+  }
+
+  /** check the vector is equal */
+  pub fn is_eq(&self, other: &Spear) -> bool {
+    self.x == other.x && self.y == other.y && self.z == other.z
+  }
   
 }

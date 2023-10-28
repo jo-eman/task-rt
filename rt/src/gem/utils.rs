@@ -14,4 +14,15 @@ impl Gem {
     }
   }
 
+  /** convert radians to degrees */
+  pub fn degrees(angle_radians: f64) -> f64 {
+    angle_radians * 180.0 / std::f64::consts::PI
+  }
+
+  /** convert degrees to radians */
+  pub fn radians(angle_degrees: f64) -> f64 {
+    angle_degrees * std::f64::consts::PI / 180.0
+  }
+  
+
 }
