@@ -23,14 +23,10 @@ impl Spear {
   }
   
   /** zero vector */
-  pub fn zero() -> Spear {
-    Spear::new(0.0, 0.0, 0.0)
-  }
+  pub fn zero() -> Spear { Spear::new(0.0, 0.0, 0.0) }
 
   /** check the vector is zero */
-  pub fn is_zero(&self) -> bool {
-    self.norm == 0.0
-  }
+  pub fn is_zero(&self) -> bool { self.norm == 0.0 }
   
   /** unit vector with length 1 */
   pub fn unit(&self) -> Spear {
@@ -46,14 +42,10 @@ impl Spear {
   }
 
   /** check the vector is unit with length 1 */
-  pub fn is_unit(&self) -> bool {
-    self.norm == 1.0
-  }
+  pub fn is_unit(&self) -> bool { self.norm == 1.0 }
 
   /** oposite vector */
-  pub fn back(&self) -> Spear {
-    Spear::new(-self.x, -self.y, -self.z)
-  }
+  pub fn back(&self) -> Spear { Spear::new(-self.x, -self.y, -self.z) }
 
   /** check the vector is oposite directed */
   pub fn is_back(&self, other: &Spear) -> bool {
@@ -81,6 +73,35 @@ impl Spear {
   /** check the vector is equal */
   pub fn is_eq(&self, other: &Spear) -> bool {
     self.x == other.x && self.y == other.y && self.z == other.z
+  }
+
+  /** scalar product of vectors */
+  pub fn scalar(&self, other: &Spear) -> f64 {
+    self.x * other.x + self.y * other.y + self.z * other.z
+  }
+
+  //todo: not sure about this
+  /** vector product of vectors */
+  pub fn normal(&self, other: &Spear) -> Spear {
+    Spear::new(
+      self.y * other.z - self.z * other.y,
+      self.z * other.x - self.x * other.z,
+      self.x * other.y - self.y * other.x
+    )
+  }
+
+  /** cosinus between . in case of at least one vector is zero, returns 1 */
+  pub fn cos(&self, other: &Spear) -> f64 {
+    if self.is_zero() || other.is_zero() { return 1.0 }
+    Gem::sin_cos_cut(self.scalar(other) / (self.norm * other.norm))
+  }
+
+  /** angle between vectors in radians */
+  pub fn angle_radians(&self, other: &Spear) -> f64 { self.cos(other).acos() }
+
+  /** angle between vectors in degrees */
+  pub fn angle_degrees(&self, other: &Spear) -> f64 {
+    Gem::degrees(self.angle_radians(other))
   }
   
 }
