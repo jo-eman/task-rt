@@ -38,7 +38,7 @@ impl Spear {
   /// cosinus of the angle with the z axis
   pub fn gam(&self) -> f64 { if self.is_zero() { 1.0 } else { self.z / self.norm() } }
 
-  /// same directed max length vector, limited synthetically
+  /// same directed max length vector, limited additionally
   pub fn maximum(&self) -> Spear {
     let mut v = Spear::zero();
     v.x = f64::max_xyz();
@@ -98,18 +98,24 @@ impl Spear {
     self.is_same(other) || self.is_back(other)
   }
 
+  //todo: not sure about this
   /// check the vector is equal
   pub fn is_eq(&self, other: &Spear) -> bool {
     self.x == other.x && self.y == other.y && self.z == other.z
   }
 
-  /// scalar product of vectors */
+  /// scalar product of vectors, additionally limited to max_xyz
   pub fn scalar(&self, other: &Spear) -> f64 {
-    self.x * other.x + self.y * other.y + self.z * other.z
+    (self.x * other.x + self.y * other.y + self.z * other.z).xyz()
   }
 
-  //todo: not sure about this
-  /// vector product of vectors */
+  /// vector product of vectors. Scaled to unit vector with length 1.
+  /// 
+  /// Vector perpendicular to self and other.
+  /// Normal vector, directed to position, to see ccw from self to other.
+  /// 
+  /// Can return zero vector, in case of self and other are parallel,
+  /// or one of them is zero vector.
   pub fn normal(&self, other: &Spear) -> Spear {
     Spear::new(
       self.y * other.z - self.z * other.y,
@@ -118,84 +124,62 @@ impl Spear {
     )
   }
 
-  /// sum of vectors */
+  /// sum of vectors, scaled to unit vector with length 1
   pub fn add(&self, other: &Spear) -> Spear {
-    let x =
-    if self.x + other.x > f64::max_xyz() { f64::max_xyz() }
-    else if self.x + other.x < f64::min_xyz() { f64::min_xyz() }
-    else { self.x + other.x };
-
-    let y =
-    if self.y + other.y > f64::max_xyz() { f64::max_xyz() }
-    else if self.y + other.y < f64::min_xyz() { f64::min_xyz() }
-    else { self.y + other.y };
-
-    let z =
-    if self.z + other.z > f64::max_xyz() { f64::max_xyz() }
-    else if self.z + other.z < f64::min_xyz() { f64::min_xyz() }
-    else { self.z + other.z };
-
-    Spear::new(x, y, z)
+    Spear::new(
+      (self.x + other.x).xyz(),
+      (self.y + other.y).xyz(),
+      (self.z + other.z).xyz(),
+    )
+    
   }
 
-  /// difference of vectors */
+  /// difference of vectors, scaled to unit vector with length 1
   pub fn sub(&self, other: &Spear) -> Spear {
-    let x =
-    if self.x - other.x > f64::max_xyz() { f64::max_xyz() }
-    else if self.x - other.x < f64::min_xyz() { f64::min_xyz() }
-    else { self.x - other.x };
+    Spear::new(
+      (self.x - other.x).xyz(),
+      (self.y - other.y).xyz(),
+      (self.z - other.z).xyz(),
+    )
 
-    let y =
-    if self.y - other.y > f64::max_xyz() { f64::max_xyz() }
-    else if self.y - other.y < f64::min_xyz() { f64::min_xyz() }
-    else { self.y - other.y };
-
-    let z =
-    if self.z - other.z > f64::max_xyz() { f64::max_xyz() }
-    else if self.z - other.z < f64::min_xyz() { f64::min_xyz() }
-    else { self.z - other.z };
-
-    Spear::new(x, y, z)
   }
 
-  /// multiply vector by scalar */
+  /// multiply vector by scalar(limited additionally), scaled to unit vector with length 1
   pub fn mul(&self, scalar: f64) -> Spear {
-    let x =
-    if self.x * scalar > f64::max_xyz() { f64::max_xyz() }
-    else if self.x * scalar < f64::min_xyz() { f64::min_xyz() }
-    else { self.x * scalar };
+    let scalar = scalar.xyz();
+    Spear::new(
+      (self.x * scalar).xyz(),
+      (self.y * scalar).xyz(),
+      (self.z * scalar).xyz(),
+    )
 
-    let y =
-    if self.y * scalar > f64::max_xyz() { f64::max_xyz() }
-    else if self.y * scalar < f64::min_xyz() { f64::min_xyz() }
-    else { self.y * scalar };
-
-    let z =
-    if self.z * scalar > f64::max_xyz() { f64::max_xyz() }
-    else if self.z * scalar < f64::min_xyz() { f64::min_xyz() }
-    else { self.z * scalar };
-
-    Spear::new(x, y, z)
   }
 
-  /// divide vector by scalar */
+  /// divide vector by scalar(limited additionally), scaled to unit vector with length 1
   pub fn div(&self, scalar: f64) -> Spear {
     if scalar == 0.0 { self.maximum() }
-    else { Spear::new(self.x / scalar, self.y / scalar, self.z / scalar) }
+    else {
+      Spear::new(
+        (self.x / scalar).xyz(), 
+        (self.y / scalar).xyz(), 
+        (self.z / scalar).xyz()
+      )
+    }
+    
   }
 
-  /// cosinus between . in case of at least one vector is zero, returns 1 */
+  /// cosine between vectors . in case of at least one vector is zero, returns 1.0
   pub fn cos(&self, other: &Spear) -> f64 {
     if self.is_zero() || other.is_zero() { return 1.0 }
     (self.scalar(other) / (self.norm() * other.norm())).cut()
   }
 
   /// angle between vectors in radians */
-  pub fn angle_radians(&self, other: &Spear) -> f64 { self.cos(other).acos() }
+  pub fn ang_rad(&self, other: &Spear) -> f64 { self.cos(other).acos() }
 
   /// angle between vectors in degrees */
-  pub fn angle_degrees(&self, other: &Spear) -> f64 {
-    Gem::degrees(self.angle_radians(other))
+  pub fn ang_deg(&self, other: &Spear) -> f64 {
+    Gem::degrees(self.ang_rad(other))
   }
   
 }
