@@ -26,6 +26,7 @@ impl Scene {
     for row in 0..height {
       for col in 0..width {
         // index of the pixel in the data array
+        // todo: before loops, calc the upper left corner of the camera. Then move the camera to the right and down, and calc the ray for each pixel
       }
     }
     Vec::new() //todo dev gap
