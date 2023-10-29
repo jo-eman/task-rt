@@ -43,7 +43,7 @@ impl Gem {
 
 trait F64xyz {
   /** maximum value for 3d vector and 3d position projection to each axis */
-  fn max_xyz() -> f64 {f64::MAX.sqrt() -1.0}
+  fn max_xyz() -> f64 {f64::MAX.sqrt() / 3.0 -1.0}
 
   /** minimum value for 3d vector and 3d position projection to each axis */
   fn min_xyz() -> f64 {-Self::max_xyz()}
