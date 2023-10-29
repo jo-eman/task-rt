@@ -11,6 +11,8 @@ impl Dot {
   pub fn new(x: f64, y: f64, z: f64) -> Dot { Dot { x:x.xyz(), y:y.xyz(), z:z.xyz() } }
   
   pub fn zero() -> Dot { Dot::new(0.0, 0.0, 0.0) }
+
+  pub fn is_zero(&self) -> bool { self.x == 0.0 && self.y == 0.0 && self.z == 0.0 }
   
   pub fn from_array(a: [f64; 3]) -> Dot {
     Dot::new(a[0], a[1], a[2])
