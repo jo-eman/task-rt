@@ -16,7 +16,8 @@ impl Gem {
 
 pub trait F64xyz {
   /// maximum value for 3d vector and 3d position projection to each axis
-  fn max_xyz() -> f64 {(f64::MAX / 3.0).sqrt()  -1.0}
+  fn max_xyz() -> f64 {(f64::MAX / 6.0).sqrt() -1.0}
+  // (../6.0.. ) to try prevent overflow for 3d plane calculations
 
   /// minimum value for 3d vector and 3d position projection to each axis
   fn min_xyz() -> f64 {-Self::max_xyz()}

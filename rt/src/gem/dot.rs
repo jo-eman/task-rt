@@ -1,6 +1,8 @@
+use super::mat::Mat;
 use super::utils::F64xyz;
 use super::spear::Spear;
 
+/// 3d position implementation
 pub struct Dot {
   pub x: f64,
   pub y: f64,
@@ -74,6 +76,20 @@ impl Dot {
       )
     }
 
+  }
+
+  /// distance between positions
+  pub fn d_dot(&self, o: &Dot) -> f64 {
+    ((self.x - o.x).powi(2) + (self.y - o.y).powi(2) + (self.z - o.z).powi(2)).sqrt()
+  }
+
+  /// distance to plane (closest projection to flat surface).
+  /// 
+  /// If plane is zero, returns max_xyz limit, to avoid division by zero
+  pub fn d_mat(&self, p: &Mat) -> f64 {
+    let pn = p.normal.norm();
+    if pn == 0.0 { f64::max_xyz() }
+    else { (p.a * self.x + p.b * self.y + p.c * self.z + p.d).abs() / pn }
   }
   
 }

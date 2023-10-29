@@ -8,7 +8,9 @@ pub struct Mat {
   pub b: f64,
   pub c: f64,
   pub d: f64,
+  /// origin point of the plane normal
   pub origin: Dot,
+  /// normal vector of the plane
   pub normal: Spear,
 }
 

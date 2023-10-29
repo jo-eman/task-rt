@@ -44,7 +44,11 @@ impl Camera {
             "Zoom must be greater than zero".to_string()
           })?;
           if zoom < 1 || zoom > usize::MAX {
-            return Err("Zoom must be between 1 and 18446744073709551615".to_string());
+            return Err(
+              format!(
+                "Zoom must be between 1 and {}", MAX_OUTPUT_PICTURE_SIDE_SIZE.pow(2)
+              )
+            );
           }
           zoom_parsed = true;
         }
@@ -104,7 +108,11 @@ impl Camera {
       }
     }
     if !zoom_parsed {
-      return Err("Camera zoom [1-18446744073709551615] not specified".to_string());
+      return Err(
+        format!(
+          "Camera zoom [1..{}] not specified", MAX_OUTPUT_PICTURE_SIDE_SIZE.pow(2)
+        )
+      );
     }
     if !from_parsed {
       return Err("Camera position [from x y z] not specified".to_string());
