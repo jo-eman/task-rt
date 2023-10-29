@@ -1,4 +1,5 @@
 use super::gem::Gem;
+use super::utils::F64xyz;
 
 /**vector 3d implementation */
 pub struct Spear {
@@ -13,20 +14,20 @@ pub struct Spear {
 
 impl Spear {
   pub fn new(x: f64, y: f64, z: f64) -> Spear {
-    let x = Gem::limit_xyz(x);
-    let y = Gem::limit_xyz(y);
-    let z = Gem::limit_xyz(z);
+    let x = (x).xyz();
+    let y = (y).xyz();
+    let z = (z).xyz();
     /* length of vector */
     let norm = (x.powi(2) + y.powi(2) + z.powi(2)).sqrt();
-    let alf = if norm == 0.0 { 1.0 } else { Gem::sin_cos_cut(x / norm) };
-    let bet = if norm == 0.0 { 1.0 } else { Gem::sin_cos_cut(y / norm) };
-    let gam = if norm == 0.0 { 1.0 } else { Gem::sin_cos_cut(z / norm) };
+    let alf = if norm == 0.0 { 1.0 } else { (x / norm).cut() };
+    let bet = if norm == 0.0 { 1.0 } else { (y / norm).cut() };
+    let gam = if norm == 0.0 { 1.0 } else { (z / norm).cut() };
     Spear { norm, x, y, z, alf, bet, gam }
     
   }
 
   /** max length vector, limited synthetically */
-  pub fn maximum(&self) -> Spear { Spear::new(Gem::max_xyz(), Gem::max_xyz(), Gem::max_xyz()) }
+  pub fn maximum(&self) -> Spear { Spear::new(f64::max_xyz(), f64::max_xyz(), f64::max_xyz()) }
 
   /** check the vector is max */
   pub fn is_maximum(&self) -> bool { self.norm == self.maximum().norm }
@@ -102,18 +103,18 @@ impl Spear {
   /** sum of vectors */
   pub fn add(&self, other: &Spear) -> Spear {
     let x =
-    if self.x + other.x > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.x + other.x < Gem::min_xyz() { Gem::min_xyz() }
+    if self.x + other.x > f64::max_xyz() { f64::max_xyz() }
+    else if self.x + other.x < f64::min_xyz() { f64::min_xyz() }
     else { self.x + other.x };
 
     let y =
-    if self.y + other.y > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.y + other.y < Gem::min_xyz() { Gem::min_xyz() }
+    if self.y + other.y > f64::max_xyz() { f64::max_xyz() }
+    else if self.y + other.y < f64::min_xyz() { f64::min_xyz() }
     else { self.y + other.y };
 
     let z =
-    if self.z + other.z > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.z + other.z < Gem::min_xyz() { Gem::min_xyz() }
+    if self.z + other.z > f64::max_xyz() { f64::max_xyz() }
+    else if self.z + other.z < f64::min_xyz() { f64::min_xyz() }
     else { self.z + other.z };
 
     Spear::new(x, y, z)
@@ -122,18 +123,18 @@ impl Spear {
   /** difference of vectors */
   pub fn sub(&self, other: &Spear) -> Spear {
     let x =
-    if self.x - other.x > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.x - other.x < Gem::min_xyz() { Gem::min_xyz() }
+    if self.x - other.x > f64::max_xyz() { f64::max_xyz() }
+    else if self.x - other.x < f64::min_xyz() { f64::min_xyz() }
     else { self.x - other.x };
 
     let y =
-    if self.y - other.y > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.y - other.y < Gem::min_xyz() { Gem::min_xyz() }
+    if self.y - other.y > f64::max_xyz() { f64::max_xyz() }
+    else if self.y - other.y < f64::min_xyz() { f64::min_xyz() }
     else { self.y - other.y };
 
     let z =
-    if self.z - other.z > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.z - other.z < Gem::min_xyz() { Gem::min_xyz() }
+    if self.z - other.z > f64::max_xyz() { f64::max_xyz() }
+    else if self.z - other.z < f64::min_xyz() { f64::min_xyz() }
     else { self.z - other.z };
 
     Spear::new(x, y, z)
@@ -142,18 +143,18 @@ impl Spear {
   /** multiply vector by scalar */
   pub fn mul(&self, scalar: f64) -> Spear {
     let x =
-    if self.x * scalar > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.x * scalar < Gem::min_xyz() { Gem::min_xyz() }
+    if self.x * scalar > f64::max_xyz() { f64::max_xyz() }
+    else if self.x * scalar < f64::min_xyz() { f64::min_xyz() }
     else { self.x * scalar };
 
     let y =
-    if self.y * scalar > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.y * scalar < Gem::min_xyz() { Gem::min_xyz() }
+    if self.y * scalar > f64::max_xyz() { f64::max_xyz() }
+    else if self.y * scalar < f64::min_xyz() { f64::min_xyz() }
     else { self.y * scalar };
 
     let z =
-    if self.z * scalar > Gem::max_xyz() { Gem::max_xyz() }
-    else if self.z * scalar < Gem::min_xyz() { Gem::min_xyz() }
+    if self.z * scalar > f64::max_xyz() { f64::max_xyz() }
+    else if self.z * scalar < f64::min_xyz() { f64::min_xyz() }
     else { self.z * scalar };
 
     Spear::new(x, y, z)
@@ -168,7 +169,7 @@ impl Spear {
   /** cosinus between . in case of at least one vector is zero, returns 1 */
   pub fn cos(&self, other: &Spear) -> f64 {
     if self.is_zero() || other.is_zero() { return 1.0 }
-    Gem::sin_cos_cut(self.scalar(other) / (self.norm * other.norm))
+    (self.scalar(other) / (self.norm * other.norm)).cut()
   }
 
   /** angle between vectors in radians */

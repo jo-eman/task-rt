@@ -26,22 +26,22 @@ impl Gem {
     angle_degrees * std::f64::consts::PI / 180.0
   }
   
-  /** maximum value for 3d vector and 3d position projection to each axis */
-  pub fn max_xyz() -> f64 { f64::MAX.sqrt()-1.0 }
+  // /** maximum value for 3d vector and 3d position projection to each axis */
+  // pub fn max_xyz() -> f64 { f64::MAX.sqrt()-1.0 }
 
-  /** minimum value for 3d vector and 3d position projection to each axis */
-  pub fn min_xyz() -> f64 { -Gem::max_xyz() }
+  // /** minimum value for 3d vector and 3d position projection to each axis */
+  // pub fn min_xyz() -> f64 { -Gem::max_xyz() }
 
-  /** limit x, y, z value if incoming is greater than max_xyz or less than min_xyz */
-  pub fn limit_xyz(value: f64) -> f64 {
-    if value > Gem::max_xyz() { Gem::max_xyz() }
-    else if value < Gem::min_xyz() { Gem::min_xyz() }
-    else { value }
-  }
+  // /** limit x, y, z value if incoming is greater than max_xyz or less than min_xyz */
+  // pub fn limit_xyz(value: f64) -> f64 {
+  //   if value > Gem::max_xyz() { Gem::max_xyz() }
+  //   else if value < Gem::min_xyz() { Gem::min_xyz() }
+  //   else { value }
+  // }
 
 }
 
-trait F64xyz {
+pub trait F64xyz {
   /** maximum value for 3d vector and 3d position projection to each axis */
   fn max_xyz() -> f64 {f64::MAX.sqrt() / 3.0 -1.0}
 
