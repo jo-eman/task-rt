@@ -1,3 +1,5 @@
+use super::utils::F64xyz;
+use super::spear::Spear;
 
 pub struct Dot {
   pub x: f64,
@@ -6,40 +8,46 @@ pub struct Dot {
 }
 
 impl Dot {
-  pub fn new(x: f64, y: f64, z: f64) -> Dot { Dot { x, y, z } }
+  pub fn new(x: f64, y: f64, z: f64) -> Dot { Dot { x:x.xyz(), y:y.xyz(), z:z.xyz() } }
   
-  pub fn zero() -> Dot { Dot { x: 0.0, y: 0.0, z: 0.0 } }
+  pub fn zero() -> Dot { Dot::new(0.0, 0.0, 0.0) }
   
-  pub fn from_array(array: [f64; 3]) -> Dot {
-    Dot { x: array[0], y: array[1], z: array[2], }
+  pub fn from_array(a: [f64; 3]) -> Dot {
+    Dot::new(a[0], a[1], a[2])
   }
-  
   pub fn to_array(&self) -> [f64; 3] { [self.x, self.y, self.z] }
   
-  pub fn from_vec(vec: Vec<f64>) -> Dot { Dot { x: vec[0], y: vec[1], z: vec[2], } }
-  
+  pub fn from_vec(v: Vec<f64>) -> Dot { Dot::new( v[0], v[1], v[2]) }
   pub fn to_vec(&self) -> Vec<f64> { vec![self.x, self.y, self.z] }
+
+  pub fn from_spear(s: Spear) -> Dot { Dot::new(s.x, s.y, s.z) }
+  pub fn to_spear(&self) -> Spear { Spear::new(self.x, self.y, self.z) }
   
-  pub fn add(&self, other: &Dot) -> Dot {
-    Dot { x: self.x + other.x, y: self.y + other.y, z: self.z + other.z, }
+  pub fn add(&self, o: &Dot) -> Dot {
+    Dot::new( self.x + o.x, self.y + o.y, self.z + o.z )
   }
   
-  pub fn sub(&self, other: &Dot) -> Dot {
-    Dot { x: self.x - other.x, y: self.y - other.y, z: self.z - other.z, }
+  pub fn sub(&self, o: &Dot) -> Dot {
+    Dot::new( self.x - o.x, self.y - o.y, self.z - o.z )
   }
   
-  pub fn mul(&self, other: &Dot) -> Dot {
-    Dot { x: self.x * other.x, y: self.y * other.y, z: self.z * other.z, }
+  pub fn mul(&self, o: &Dot) -> Dot {
+    Dot::new( self.x * o.x, self.y * o.y, self.z * o.z )
   }
   
   //todo: not sure about this
-  /** must return inf in case of division by zero , but manually changed to f64::MAX */
-  pub fn div(&self, other: &Dot) -> Dot {
-    Dot {
-      x:if other.x == 0.0 { f64::MAX } else { self.x / other.x },
-      y:if other.y == 0.0 { f64::MAX } else { self.y / other.y },
-      z:if other.z == 0.0 { f64::MAX } else { self.z / other.z },
-    }
+  /// must return inf in case of division by zero , but additionally limited
+  pub fn div(&self, o: &Dot) -> Dot {
+    let x = if self.x == 0.0 && o.x == 0.0 { 1.0 } else {self.x};
+    let y = if self.y == 0.0 && o.y == 0.0 { 1.0 } else {self.y};
+    let z = if self.z == 0.0 && o.z == 0.0 { 1.0 } else {self.z};
+    
+    Dot::new(
+      x / o.x,
+      y / o.y,
+      z / o.z,
+    )
+
   }
 
   pub fn mirror_x(&self) -> Dot { Dot { x: -self.x, y: self.y, z: self.z, } }
@@ -50,5 +58,20 @@ impl Dot {
   pub fn mirror_yz(&self) -> Dot { Dot { x: self.x, y: -self.y, z: -self.z, } }
   pub fn mirror(&self) -> Dot { Dot { x: -self.x, y: -self.y, z: -self.z, } }
   /*wtf am i doing , facepalm, need pause */
+
+  /// offset position along vector
+  pub fn offset(&self, s: &Spear, t: f64) -> Dot {
+    let n = s.norm();
+    if t == 0.0 || n == 0.0 {
+      Dot::new(self.x, self.y, self.z) }
+    else {
+      Dot::new(
+        self.x + s.x * t / n,
+        self.y + s.y * t / n,
+        self.z + s.z * t / n,
+      )
+    }
+
+  }
   
 }
