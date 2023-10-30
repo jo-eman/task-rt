@@ -14,8 +14,12 @@ impl Dot {
   pub fn new(x: f64, y: f64, z: f64) -> Dot { Dot { x:x.xyz(), y:y.xyz(), z:z.xyz() } }
   
   pub fn zero() -> Dot { Dot::new(0.0, 0.0, 0.0) }
-
   pub fn is_zero(&self) -> bool { self.x == 0.0 && self.y == 0.0 && self.z == 0.0 }
+
+  pub fn maximum() -> Dot {
+    Dot::new( f64::max_xyz(), f64::max_xyz(), f64::max_xyz(), )
+  }
+  pub fn is_maximum(&self) -> bool { self.d_dot(&Dot::maximum()) == 0.0 }
   
   pub fn from_array(a: [f64; 3]) -> Dot {
     Dot::new(a[0], a[1], a[2])
@@ -84,13 +88,48 @@ impl Dot {
     ((self.x - o.x).powi(2) + (self.y - o.y).powi(2) + (self.z - o.z).powi(2)).sqrt()
   }
 
-  /// distance to plane (closest projection to flat surface).
+  /// distance to plane (closest to flat surface).
   /// 
   /// If plane is zero, returns max_xyz limit, to avoid division by zero
   pub fn d_mat(&self, p: &Mat) -> f64 {
     let pn = p.normal.norm();
     if pn == 0.0 { f64::max_xyz() }
-    else { (p.a * self.x + p.b * self.y + p.c * self.z + p.d).abs() / pn }
+    else { (p.normal.scalar(&self.to_spear()) + p.d).abs() / pn }
+  }
+
+  /// projection of position to plane (closest projection to flat surface).
+  /// 
+  /// if p.normal.is_zero() returns Dot::maximum(), which is not clear,
+  /// but can be easy to manage in code. With valid usage of \<Mat\>
+  /// it should never happen.
+  pub fn p_mat(&self, p: &Mat) -> Dot {
+    let pn = p.normal.norm();
+    if p.normal.is_zero() { Dot::maximum() }
+    else {
+      let check_up = -(p.normal.scalar(&self.to_spear()) + p.d);
+      let check_dn = p.normal.scalar(&p.normal);
+      Dot::new(
+        self.x + p.a * check_up / check_dn,
+        self.y + p.b * check_up / check_dn,
+        self.z + p.c * check_up / check_dn,
+      )
+    }
+
+  }
+
+  /// check the dot is above the plane, along plane normal
+  pub fn is_above(&self, p: &Mat) -> bool {
+    p.normal.scalar(&self.to_spear()) + p.d > 0.0
+  }
+
+  /// check the dot is below the plane, along plane normal
+  pub fn is_below(&self, p: &Mat) -> bool {
+    p.normal.scalar(&self.to_spear()) + p.d < 0.0
+  }
+
+  /// check the dot is in the plane
+  pub fn is_part_of(&self, p: &Mat) -> bool {
+    p.normal.scalar(&self.to_spear()) + p.d == 0.0
   }
   
 }

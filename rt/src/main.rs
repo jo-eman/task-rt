@@ -9,6 +9,7 @@ mod parser {
 mod tracer {
   pub mod scene;
   pub mod trace;
+  pub mod check;
 }
 
 mod printer {
@@ -56,7 +57,7 @@ fn main() {
   println!("Camera: {:?}", camera);
   println!("Light: {:?}", light);
   println!("Objects: {:?}", objects);
-
+  
   let scene = tracer::scene::Scene::new(camera, light, objects);
   
   generate_ppm_file(

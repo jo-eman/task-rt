@@ -28,9 +28,9 @@ impl Mat {
       let d = -a * origin.x - b * origin.y - c * origin.z;
       Mat { a, b, c, d, origin, normal }
     }
-
+    
   }
-
+  
   pub fn zero() -> Mat {
     Mat {
       a: 0.0,
@@ -41,16 +41,47 @@ impl Mat {
       normal: Spear::zero(),
     }
   }
-
+  
   pub fn is_zero(&self) -> bool { self.a == 0.0 && self.b == 0.0 && self.c == 0.0 && self.d == 0.0 }
-
+  
   /// check the plane normal is back directed to the other plane normal
   pub fn is_back(&self, o: &Mat) -> bool { self.normal.is_back(&o.normal) }
-
+  
   /// check the plane normal is same directed to the other plane normal
   pub fn is_same(&self, o: &Mat) -> bool { self.normal.is_same(&o.normal) }
-
+  
   /// check the plane is parallel to the other plane
   pub fn is_ll(&self, o: &Mat) -> bool { self.normal.is_ll(&o.normal) }
+  
+  /// check the plane is below the other plane (along the other plane normal direction)
+  pub fn is_below(&self, o: &Mat) -> bool {
+    todo!("Mat::is_below()" );
+    
+  }
+  
+  /// check the plane is above the other plane (along the other plane normal direction)
+  pub fn is_above(&self, o: &Mat) -> bool {
+    todo!("Mat::is_above()");
+    
+  }
+  
+  /// check the plane is on the other plane(belongs to the same flat surface)
+  pub fn is_eq(&self, o: &Mat) -> bool {
+    self.a * o.d == o.a * self.d &&
+    self.b * o.d == o.b * self.d &&
+    self.c * o.d == o.c * self.d
+  }
 
+  /// distance between planes.
+  /// Set zero if planes are not parallel. Because i want it.
+  fn d_mat(&self, o: &Mat) -> f64 {
+    if self.is_ll(o) {
+        let n = (self.d - o.d).abs(); // numerator
+        let d = (self.a.powi(2) + self.b.powi(2) + self.c.powi(2)).sqrt(); // denominator
+        (n / d).xyz() // distance, additionally limited
+    } else {
+        0.0
+    }
+}
+  
 }
