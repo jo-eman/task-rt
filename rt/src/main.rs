@@ -1,5 +1,4 @@
 mod gem;
-use gem::gem::Gem; /* wtf rust. w...t...f */
 
 mod parser {
   pub mod camera_file;

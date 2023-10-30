@@ -3,6 +3,7 @@ use super::utils::F64xyz;
 use super::spear::Spear;
 
 /// 3d position implementation
+#[derive(Debug)]
 pub struct Dot {
   pub x: f64,
   pub y: f64,

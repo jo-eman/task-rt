@@ -1,7 +1,9 @@
+use super::dot::Dot;
 use super::gem::Gem;
 use super::utils::F64xyz;
 
 /// vector 3d implementation
+#[derive(Debug)]
 pub struct Spear {
   pub x: f64,
   pub y: f64,
@@ -9,7 +11,7 @@ pub struct Spear {
 }
 
 impl Spear {
-  /// new vector. Will be recalculated to absolute length 1
+  /// new vector. from zero to position. Will be recalculated to absolute length 1
   pub fn new(x: f64, y: f64, z: f64) -> Spear {
     let x = (x).xyz();
     let y = (y).xyz();
@@ -24,6 +26,15 @@ impl Spear {
     
     Spear { x, y, z,}
     
+  }
+
+  /// new vector. \[ from_position, to_position \]. Will be recalculated to absolute length 1
+  pub fn pp(pp: &[Dot;2]) -> Spear {
+    Spear::new(
+      pp[1].x - pp[0].x,
+      pp[1].y - pp[0].y,
+      pp[1].z - pp[0].z,
+    )
   }
   
   /// absolute length of vector
