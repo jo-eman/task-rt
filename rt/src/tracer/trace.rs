@@ -30,6 +30,7 @@ impl Scene {
       }
     }
 
+    self.dev_check_dot_above_below_plane();//todo: remove. dev stuff
     self.dev_print(); //todo: remove. dev stuff
     self.dummy_trace() //todo dev gap
   }

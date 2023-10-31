@@ -50,7 +50,7 @@ impl Spear {
   pub fn gam(&self) -> f64 { if self.is_zero() { 1.0 } else { self.z / self.norm() } }
   
   /// same directed max length vector, limited additionally
-  pub fn maximum(&self) -> Spear {
+  pub fn maximum() -> Spear {
     let mut v = Spear::zero();
     v.x = f64::max_xyz();
     v.y = f64::max_xyz();
@@ -59,15 +59,19 @@ impl Spear {
   }
   
   /// check the vector is max
-  pub fn is_maximum(&self) -> bool { self.norm() == self.maximum().norm() }
+  pub fn is_maximum(&self) -> bool { self.norm() == Spear::maximum().norm() }
   
   /// zero vector
   pub fn zero() -> Spear { Spear::new(0.0, 0.0, 0.0) }
-  
   /// check the vector is zero
   pub fn is_zero(&self) -> bool { self.norm() == 0.0 }
+
+  /// vector (1.0, 1.0, 1.0)
+  pub fn trione() -> Spear { Spear::new(1.0, 1.0, 1.0) }
+  /// check the vector is trione
+  pub fn is_trione(&self) -> bool { self.x == 1.0 && self.y == 1.0 && self.z == 1.0 }
   
-  /// same directed scaled unit vector with length 1 or zero vector if x y z are zeros
+  /// same directed scaled unit vector (with length 1) or zero vector(if x y z are zeros)
   pub fn unit(&self) -> Spear {
     if self.norm() == 0.0 {Spear::zero()}
     else { Spear::new( self.x, self.y, self.z ) }

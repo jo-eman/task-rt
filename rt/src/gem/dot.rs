@@ -13,8 +13,15 @@ pub struct Dot {
 impl Dot {
   pub fn new(x: f64, y: f64, z: f64) -> Dot { Dot { x:x.xyz(), y:y.xyz(), z:z.xyz() } }
   
+  /// position (0.0, 0.0, 0.0)
   pub fn zero() -> Dot { Dot::new(0.0, 0.0, 0.0) }
+  /// check the position is (0.0, 0.0, 0.0)
   pub fn is_zero(&self) -> bool { self.x == 0.0 && self.y == 0.0 && self.z == 0.0 }
+
+  /// position (1.0, 1.0, 1.0)
+  pub fn trione() -> Dot { Dot::new(1.0, 1.0, 1.0) }
+  /// check the position is (1.0, 1.0, 1.0)
+  pub fn is_trione(&self) -> bool { self.x == 1.0 && self.y == 1.0 && self.z == 1.0 }
 
   pub fn maximum() -> Dot {
     Dot::new( f64::max_xyz(), f64::max_xyz(), f64::max_xyz(), )
