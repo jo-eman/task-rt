@@ -81,7 +81,7 @@ impl Spear {
   /// check the vector is unit with length 1
   pub fn is_unit(&self) -> bool { self.norm() == 1.0 }
   
-  /// oposite vector
+  /// opposite vector
   pub fn back(&self) -> Spear {
     let mut v = Spear::zero();
     v.x = -self.x;
@@ -90,7 +90,7 @@ impl Spear {
     v
   }
   
-  /// check the vector is oposite directed
+  /// check the vector is opposite directed
   pub fn is_back(&self, other: &Spear) -> bool {
     let unit_other = other.unit();
     let unit_self = self.unit();

@@ -10,6 +10,7 @@ mod tracer {
   pub mod scene;
   pub mod trace;
   pub mod check;
+  pub mod camera;
 }
 
 mod printer {

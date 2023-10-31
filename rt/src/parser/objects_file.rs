@@ -2,14 +2,14 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 // Define Object struct
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Objects {
-    Sphere {
+    Ball {
         color: [u8; 3],
         position: [f64; 3],
         radius: f64,
     },
-    Cube {
+    Box {
         color: [u8; 3],
         position: [f64; 3],
         size: f64,
@@ -20,7 +20,7 @@ pub enum Objects {
         radius: f64,
         height: f64,
     },
-    Flat {
+    Mat {
         color: [u8; 3],
         position: [f64; 3],
         normal: [f64; 3],
@@ -43,7 +43,7 @@ impl Objects {
                 continue;
             }
             match words[3] {
-                "sphere" if words.len() == 8 => {
+                "ball" if words.len() == 8 => {
                     let color = [
                         words[0].parse::<u8>().map_err(|_| {
                             "Color R must be an integer 0 to 255".to_string()
@@ -69,13 +69,13 @@ impl Objects {
                     let radius = words[7].parse::<f64>().map_err(|_| {
                         "Radius must be an integer".to_string()
                     })?;
-                    objects.push(Objects::Sphere {
+                    objects.push(Objects::Ball {
                         color,
                         position,
                         radius,
                     });
                 }
-                "cube" if words.len() == 8 => {
+                "box" if words.len() == 8 => {
                     let color = [
                         words[0].parse::<u8>().map_err(|_| {
                             "Color R must be an integer 0 to 255".to_string()
@@ -101,7 +101,7 @@ impl Objects {
                     let size = words[7].parse::<f64>().map_err(|_| {
                         "Size must be an integer".to_string()
                     })?;
-                    objects.push(Objects::Cube {
+                    objects.push(Objects::Box {
                         color,
                         position,
                         size,
@@ -143,7 +143,7 @@ impl Objects {
                         height,
                     });
                 }
-                "flat" if words.len() == 10 => {
+                "mat" if words.len() == 10 => {
                     let color = [
                         words[0].parse::<u8>().map_err(|_| {
                             "Color R must be an integer 0 to 255".to_string()
@@ -177,7 +177,7 @@ impl Objects {
                             "Normal z must be an integer".to_string()
                         })?,
                     ];
-                    objects.push(Objects::Flat { color, position, normal });
+                    objects.push(Objects::Mat { color, position, normal });
                 }
                 _ => {
                     return Err(format!("Unknown command: {}", line));
