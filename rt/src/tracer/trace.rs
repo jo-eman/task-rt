@@ -18,6 +18,9 @@ impl Scene {
     // data to be returned
     let mut data = vec![0; (width * height * 3) as usize];
 
+    // clear the objects, remove the objects that are not good to trace
+    let objects = self.good_to_trace(objects);
+
     // iterate over the pixels of the camera to create rays
     for row in 0..height {
       for col in 0..width {
@@ -32,6 +35,7 @@ impl Scene {
 
     self.dev_check_dot_above_below_plane();//todo: remove. dev stuff
     self.dev_print(); //todo: remove. dev stuff
+
     self.dummy_trace() //todo dev gap
   }
 

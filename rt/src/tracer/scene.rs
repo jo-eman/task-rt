@@ -55,6 +55,45 @@ impl Scene {
     cuv.normal(&cv)
   }
 
+  /// camera left plane, used for filtering the objects good to trace
+  /// plane vector aimed inside the scene (to camera screen center)
+  /// 
+  /// based on
+  /// - zoom position
+  /// - left upper camera pixel position
+  /// - camera up vector
+  /// (just move the left upper camera pixel position
+  /// along the camera up vector to build plane)
+  fn camera_left_plane(&self) -> Mat {
+    let camera_zoom_position = self.camera_zoom_position();
+    let left_top_camera_pixel = self.left_top_camera_pixel();
+    let camera_up_vector = self.camera_up_vector();
+    
+    let ray_vector = Spear::pp(
+      &[
+        camera_zoom_position,
+        left_top_camera_pixel.same(),
+        ]
+      );
+    
+    let mut plane_normal = ray_vector.normal(&camera_up_vector);
+    // check if the plane normal is zero, then simplify uses right vector
+    if plane_normal.is_zero() { plane_normal = self.camera_left_vector().back(); }
+    
+    Mat::new(left_top_camera_pixel, plane_normal)
+  }
+
+  /// camera_front_plane, used for filtering the objects good to trace
+  /// 
+  /// based on camera position, perpendicular to camera vector
+  fn camera_front_plane(&self) -> Mat {
+    let camera_position = self.camera_position();
+    let camera_vector = self.camera_vector();
+    Mat::new(camera_position, camera_vector)
+  }
+
+
+
   /// camera position
   fn camera_position(&self) -> Dot { Dot::from_array(self.camera.position) }
 

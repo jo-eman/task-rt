@@ -23,11 +23,20 @@ impl Dot {
   /// check the position is (1.0, 1.0, 1.0)
   pub fn is_trione(&self) -> bool { self.x == 1.0 && self.y == 1.0 && self.z == 1.0 }
 
+  /// position (f64::max_xyz(), f64::max_xyz(), f64::max_xyz()), additionally limited
   pub fn maximum() -> Dot {
     Dot::new( f64::max_xyz(), f64::max_xyz(), f64::max_xyz(), )
   }
+  /// check the position is (f64::max_xyz(), f64::max_xyz(), f64::max_xyz())
   pub fn is_maximum(&self) -> bool { self.d_dot(&Dot::maximum()) == 0.0 }
   
+  /// the same position
+  pub fn same(&self) -> Dot { Dot::new(self.x, self.y, self.z) }
+  /// check the position is the same
+  pub fn is_same(&self, o: &Dot) -> bool { 
+    self.x == o.x && self.y == o.y && self.z == o.z
+   }
+
   pub fn from_array(a: [f64; 3]) -> Dot {
     Dot::new(a[0], a[1], a[2])
   }

@@ -11,7 +11,7 @@ pub struct Spear {
 }
 
 impl Spear {
-  /// new vector. from zero to position. Will be recalculated to absolute length 1
+  /// new vector. from zero to position. Will be recalculated to unit vector (absolute length 1)
   pub fn new(x: f64, y: f64, z: f64) -> Spear {
     let x = (x).xyz();
     let y = (y).xyz();
@@ -28,7 +28,7 @@ impl Spear {
     
   }
 
-  /// new vector. \[ from_position, to_position \]. Will be recalculated to absolute length 1
+  /// new vector. \[ from_position, to_position \]. Will be recalculated to unit vector (absolute length 1)
   pub fn pp(pp: &[Dot;2]) -> Spear {
     Spear::new(
       pp[1].x - pp[0].x,
@@ -99,6 +99,8 @@ impl Spear {
     unit_other.z == -unit_self.z
   }
   
+  /// the same vector
+  pub fn same(&self) -> Spear { Spear::new(self.x, self.y, self.z) }
   /// check the vector is same directed
   pub fn is_same(&self, other: &Spear) -> bool {
     let unit_other = other.unit();

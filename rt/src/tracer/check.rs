@@ -13,7 +13,11 @@ impl Scene {
   /// After that, the object center point will be moved(offset) close to the plane, along plane normal vector, to some biggest distance, unique for each object properties.
   /// 
   /// The Mat(flat plane) object, will be ignored, in case if the plane is below the camera pixels plane(for this the planes must be also parallel).
-  pub fn good_to_trace(&self, objects: Vec<Objects>) -> Vec<Objects> {
+  pub fn good_to_trace(&self, objects: &Vec<Objects>) -> Vec<Objects> {
+    let mut good_to_trace:Vec<Objects> = Vec::new();
+    
+    // create the camera vectors
+
     todo!("good_to_trace")
   }
 }
