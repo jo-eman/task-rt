@@ -42,13 +42,15 @@ impl Mat {
     }
   }
   
-  pub fn is_zero(&self) -> bool { self.a == 0.0 && self.b == 0.0 && self.c == 0.0 && self.d == 0.0 }
+  pub fn same(&self) -> Mat {Mat::new(self.origin, self.normal)}
+
+  /// check the plane normal is same directed to the other plane normal
+  pub fn is_same(&self, o: &Mat) -> bool { self.normal.is_same(&o.normal) }
+  
+  pub fn is_zero(&self) -> bool { self.a == 0.0 && self.b == 0.0 && self.c == 0.0 }
   
   /// check the plane normal is back directed to the other plane normal
   pub fn is_back(&self, o: &Mat) -> bool { self.normal.is_back(&o.normal) }
-  
-  /// check the plane normal is same directed to the other plane normal
-  pub fn is_same(&self, o: &Mat) -> bool { self.normal.is_same(&o.normal) }
   
   /// check the plane is parallel to the other plane
   pub fn is_ll(&self, o: &Mat) -> bool { self.normal.is_ll(&o.normal) }

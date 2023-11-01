@@ -3,7 +3,7 @@ use super::gem::Gem;
 use super::utils::F64xyz;
 
 /// vector 3d implementation
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Spear {
   pub x: f64,
   pub y: f64,
@@ -26,6 +26,11 @@ impl Spear {
     
     Spear { x, y, z,}
     
+  }
+
+  /// new vector. from zero to position. Will be recalculated to unit vector (absolute length 1)
+  pub fn from_array(a: [f64; 3]) -> Spear {
+    Spear::new(a[0], a[1], a[2])
   }
 
   /// new vector. \[ from_position, to_position \]. Will be recalculated to unit vector (absolute length 1)

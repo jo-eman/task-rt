@@ -1,4 +1,4 @@
-use crate::parser::objects_file::Objects;
+use crate::{parser::objects_file::Objects, gem::{mat::Mat, dot::Dot, spear::Spear}};
 
 use super::scene::Scene;
 
@@ -17,7 +17,7 @@ impl Scene {
     for object in objects {
       match object {
         Objects::Mat { position, normal, .. } => {
-          if self.check_mat(position, normal) { good_to_trace.push(object.clone());}
+          if self.mat_is_good(position, normal) { good_to_trace.push(object.clone());}
         }
         Objects::Ball { position, radius, .. } => {}
         Objects::Box { position, size, .. } => {}
@@ -29,9 +29,25 @@ impl Scene {
     good_to_trace
   }
 
-  fn check_mat(&self, position: &[f64; 3], normal: &[f64; 3]) -> bool {
+  fn mat_is_good(&self, position: &[f64; 3], normal: &[f64; 3]) -> bool {
+    let p = Mat::new(
+      Dot::from_array(*position),
+      Spear::from_array(*normal)
+    );
     
-    false
+    let camera_front_plane = self.camera_front_plane();
+    let camera_left_plane = self.camera_left_plane();
+    let camera_right_plane = self.camera_right_plane();
+    let camera_top_plane = self.camera_top_plane();
+    let camera_bottom_plane = self.camera_bottom_plane();
+    // if plane is below any camera planes, or the same as any camera plane, then ignore it
+    p.is_zero() ||
+    p.is_ll(&camera_front_plane) && !p.origin.is_above(&camera_front_plane) ||
+    p.is_ll(&camera_left_plane) && !p.origin.is_above(&camera_left_plane) ||
+    p.is_ll(&camera_right_plane) && !p.origin.is_above(&camera_right_plane) ||
+    p.is_ll(&camera_top_plane) && !p.origin.is_above(&camera_top_plane) ||
+    p.is_ll(&camera_bottom_plane) && !p.origin.is_above(&camera_bottom_plane)
+    
   }
 
   fn check_ball(&self, position: &[f64; 3], radius: &f64) -> bool {todo!("check_ball")}

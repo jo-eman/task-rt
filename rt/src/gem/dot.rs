@@ -3,7 +3,7 @@ use super::utils::F64xyz;
 use super::spear::Spear;
 
 /// 3d position implementation
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Dot {
   pub x: f64,
   pub y: f64,
@@ -135,16 +135,19 @@ impl Dot {
 
   /// check the dot is above the plane, along plane normal
   pub fn is_above(&self, p: &Mat) -> bool {
+    //todo: crap, fails detected
     p.normal.scalar(&self.to_spear()) + p.d > 0.0
   }
 
   /// check the dot is below the plane, along plane normal
   pub fn is_below(&self, p: &Mat) -> bool {
+    //todo: crap, fails detected
     p.normal.scalar(&self.to_spear()) + p.d < 0.0
   }
 
   /// check the dot is in the plane
   pub fn is_part_of(&self, p: &Mat) -> bool {
+    //todo: crap, fails detected
     p.normal.scalar(&self.to_spear()) + p.d == 0.0
   }
   

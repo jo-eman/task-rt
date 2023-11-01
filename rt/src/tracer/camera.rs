@@ -53,7 +53,7 @@ impl Scene {
   /// build vector v from zoom position to camera left top pixel position
   /// then build plane normal vector from v to camera up vector
   /// build plane from camera zoom position and plane normal
-  fn camera_left_plane(&self) -> Mat {
+  pub fn camera_left_plane(&self) -> Mat {
     let camera_zoom_position = self.camera_zoom_position();
     let left_up_vector = Spear::pp(
       &[
@@ -81,7 +81,7 @@ impl Scene {
   /// build vector v from zoom position to camera right top pixel position
   /// then build plane normal vector from camera up vector to v
   /// build plane from camera zoom position and plane normal
-  fn camera_right_plane(&self) -> Mat {
+  pub fn camera_right_plane(&self) -> Mat {
     let camera_zoom_position = self.camera_zoom_position();
     let right_up_vector = Spear::pp(
       &[
@@ -110,7 +110,7 @@ impl Scene {
   /// build right_top_vector from zoom position to camera right top pixel position
   /// build plane normal vector from left_top_vector to right_top_vector
   /// build plane from camera zoom position and plane normal
-  fn camera_top_plane(&self) -> Mat {
+  pub fn camera_top_plane(&self) -> Mat {
     let camera_zoom_position = self.camera_zoom_position();
     let left_top_vector = Spear::pp(
       &[
@@ -144,7 +144,7 @@ impl Scene {
   /// build right_bottom_vector from zoom position to camera right bottom pixel position
   /// build plane normal vector from right_bottom_vector to left_bottom_vector
   /// build plane from camera zoom position and plane normal
-  fn camera_bottom_plane(&self) -> Mat {
+  pub fn camera_bottom_plane(&self) -> Mat {
     let camera_zoom_position = self.camera_zoom_position();
     let left_bottom_vector = Spear::pp(
       &[
@@ -169,7 +169,7 @@ impl Scene {
   /// camera_front_plane, used for filtering the objects good to trace
   /// 
   /// based on camera position, perpendicular to camera vector
-  fn camera_front_plane(&self) -> Mat {
+  pub fn camera_front_plane(&self) -> Mat {
     Mat::new(self.camera_position(), self.camera_vector())
   }
 

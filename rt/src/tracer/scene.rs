@@ -54,8 +54,8 @@ impl Scene {
     let normal = Spear::trione();
     let p = Mat::new(origin, normal);
     let dot_below = Dot::new(-1.0,-1.0,-1.0);
-    let dot_in = Dot::zero();
-    let dot_above = Dot::new(1.0,1.0,1.0);
+    let dot_in = Dot::trione();
+    let dot_above = Dot::new(3.0,3.0,3.0);
 
     println!("true is {}",dot_below.is_below(&p));
     println!("true is {}",dot_above.is_above(&p));
