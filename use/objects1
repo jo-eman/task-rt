@@ -3,6 +3,7 @@
 # roll: color, coordinates, radius, height. It is like short name of the cylinder with color
 # mat: color, coordinates, normal vector coordinates(started from zero point of the global coordinates). It is like short name of the flat plane with color
 255 255 0 ball 0 0 5 2
+255 255 0 ball 0 0 5 10
 0 255 255 box 0 0 0 2
 255 0 255 roll 0 0 0 2 2
 0 255 0 mat 0 0 0 0 0 1

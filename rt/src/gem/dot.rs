@@ -133,7 +133,7 @@ impl Dot {
 
   }
 
-  /// check the dot is above the plane, along plane normal
+  /// check the dot is above the plane, along plane normal vector direction
   pub fn is_above(&self, p: &Mat) -> bool {
     p.normal.scalar(&self.to_spear()) + p.d > 0.0
     // let d_mat = self.d_mat(p);
@@ -148,7 +148,7 @@ impl Dot {
     // d_forward > d_mat
   }
 
-  /// check the dot is below the plane, along plane normal
+  /// check the dot is below the plane, along plane normal vector direction
   pub fn is_below(&self, p: &Mat) -> bool {
     p.normal.scalar(&self.to_spear()) + p.d < 0.0
   }

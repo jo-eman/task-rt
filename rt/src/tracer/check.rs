@@ -11,22 +11,29 @@ impl Scene {
   /// 
   /// The Mat(flat plane) object, will be ignored, in case if the plane is below the camera pixels plane(for this the planes must be also parallel).
   pub fn good_to_trace(&self, objects: &Vec<Objects>) -> Vec<Objects> {
+    let mut bad = 0;
     let mut good_to_trace:Vec<Objects> = Vec::new();
     
     // iterate over the objects
     for object in objects {
       match object {
         Objects::Mat { position, normal, .. } => {
-          if self.mat_is_good(position, normal) { good_to_trace.push(object.clone());}
+          if self.mat_is_good(position, normal) { good_to_trace.push(object.clone());} else {self.print_bad(object); bad +=1;}
         }
         Objects::Ball { position, radius, .. } => {
-          if self.ball_is_good(position, radius) { good_to_trace.push(object.clone());}
+          if self.ball_is_good(position, radius) { good_to_trace.push(object.clone());} else {self.print_bad(object); bad +=1;}
         }
-        Objects::Box { position, size, .. } => {}
-        Objects::Roll { position, radius, height, .. } => {}
+        Objects::Box { position, size, .. } => {
+          if self.box_is_good(position, size) { good_to_trace.push(object.clone());} else {self.print_bad(object); bad +=1;}
+        }
+        Objects::Roll { position, radius, height, .. } => {
+          if self.roll_is_good(position, radius, height) { good_to_trace.push(object.clone());} else {self.print_bad(object); bad +=1;}
+        }
       }
       
     }
+
+    self.print_stats(objects.len(), good_to_trace.len(), bad);
     
     good_to_trace
   }
@@ -82,8 +89,54 @@ impl Scene {
     )
   }
   
-  fn check_box(&self, position: &[f64; 3], size: &f64) -> bool {todo!("check_box")}
+  fn box_is_good(&self, position: &[f64; 3], size: &f64) -> bool {
+    let c = Dot::from_array(*position);
+    let sun = Dot::from_array(self.light.position);
+    let v_light = Spear::pp( &[ c, sun, ] );
+    let d = (3.0 * (size / 2.0).powi(2)).sqrt(); // distance from box center to box corner
+    let nearest_dot = c.offset(
+      &v_light,
+      d,
+    );
+
+    let camera_front_plane = self.camera_front_plane();
+    let camera_left_plane = self.camera_left_plane();
+    let camera_right_plane = self.camera_right_plane();
+    let camera_top_plane = self.camera_top_plane();
+    let camera_bottom_plane = self.camera_bottom_plane();
+
+    !(// negotiation of the conditions, to return false, if any of them is true
+      size <= &0.0
+      || sun.d_dot(&nearest_dot) > self.light.power
+      || c.d_mat(&camera_front_plane) < d
+      || c.d_mat(&camera_front_plane) >= d && c.is_below(&camera_front_plane)
+      || c.d_mat(&camera_left_plane) >= d && c.is_below(&camera_left_plane)
+      || c.d_mat(&camera_right_plane) >= d && c.is_below(&camera_right_plane)
+      || c.d_mat(&camera_top_plane) >= d && c.is_below(&camera_top_plane)
+      || c.d_mat(&camera_bottom_plane) >= d && c.is_below(&camera_bottom_plane)
+    )
+
+  }
   
-  fn check_roll(&self, position: &[f64; 3], radius: &f64, height: &f64) -> bool {todo!("check_roll")}
+  /// just recall box_is_good() with the biggest size of the roll
+  fn roll_is_good(&self, position: &[f64; 3], radius: &f64, height: &f64) -> bool {
+    radius > &0.0 && height > &0.0 && self.box_is_good(
+      position,
+      &(radius * 2.0).max(*height),
+    )
+  }
   
+  /// prints the bad objects, that are not good to trace
+  fn print_bad(&self, object: &Objects) {
+    println!("ignored from trace: {:?}", object);
+  }
+
+  fn print_stats(&self,
+    objects_number:usize,
+    good_number: usize,
+    bad_number: usize
+  ) {
+    println!("objects: {}, good: {}, bad: {}", objects_number, good_number, bad_number);
+  }
+
 }
