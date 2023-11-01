@@ -1,6 +1,6 @@
 use crate::{parser::objects_file::Objects, gem::{mat::Mat, dot::Dot, spear::Spear}};
 
-use super::scene::Scene;
+use super::{scene::Scene, camera};
 
 impl Scene {
   /// check if the object is good to trace, otherwise ignore it.
@@ -19,23 +19,23 @@ impl Scene {
         Objects::Mat { position, normal, .. } => {
           if self.mat_is_good(position, normal) { good_to_trace.push(object.clone());}
         }
-        Objects::Ball { position, radius, .. } => {}
+        Objects::Ball { position, radius, .. } => {
+          if self.ball_is_good(position, radius) { good_to_trace.push(object.clone());}
+        }
         Objects::Box { position, size, .. } => {}
         Objects::Roll { position, radius, height, .. } => {}
       }
-
+      
     }
-
+    
     good_to_trace
   }
-
+  
   fn mat_is_good(&self, position: &[f64; 3], normal: &[f64; 3]) -> bool {
     let p = Mat::new(
       Dot::from_array(*position),
       Spear::from_array(*normal)
     );
-
-
     
     let camera_front_plane = self.camera_front_plane();
     let camera_left_plane = self.camera_left_plane();
@@ -45,20 +45,45 @@ impl Scene {
     // if plane is zero, then ignore it
     // if plane is too far from the light, then ignore it
     // if plane is below any camera planes, or the same as any camera plane, then ignore it
-    p.is_zero() ||
-    Dot::from_array(self.light.position).d_mat(&p) > self.light.power ||
-    p.is_ll(&camera_front_plane) && !p.origin.is_above(&camera_front_plane) ||
-    p.is_ll(&camera_left_plane) && !p.origin.is_above(&camera_left_plane) ||
-    p.is_ll(&camera_right_plane) && !p.origin.is_above(&camera_right_plane) ||
-    p.is_ll(&camera_top_plane) && !p.origin.is_above(&camera_top_plane) ||
-    p.is_ll(&camera_bottom_plane) && !p.origin.is_above(&camera_bottom_plane)
-
+    !(// negotiation of the conditions, to return false, if any of them is true
+      p.is_zero()
+      || Dot::from_array(self.light.position).d_mat(&p) > self.light.power
+      || p.is_ll(&camera_front_plane) && !p.origin.is_above(&camera_front_plane)
+      || p.is_ll(&camera_left_plane) && !p.origin.is_above(&camera_left_plane)
+      || p.is_ll(&camera_right_plane) && !p.origin.is_above(&camera_right_plane)
+      || p.is_ll(&camera_top_plane) && !p.origin.is_above(&camera_top_plane)
+      || p.is_ll(&camera_bottom_plane) && !p.origin.is_above(&camera_bottom_plane)
+    )
+    
   }
+  
+  fn ball_is_good(&self, position: &[f64; 3], radius: &f64) -> bool {
+    let c = Dot::from_array(*position);
+    let sun = Dot::from_array(self.light.position);
+    let v_light = Spear::pp( &[ c, sun, ] );
+    let nearest_dot = c.offset(&v_light, *radius);
+    let distance_to_sun = sun.d_dot(&nearest_dot);
+    
+    let camera_front_plane = self.camera_front_plane();
+    let camera_left_plane = self.camera_left_plane();
+    let camera_right_plane = self.camera_right_plane();
+    let camera_top_plane = self.camera_top_plane();
+    let camera_bottom_plane = self.camera_bottom_plane();
 
-  fn check_ball(&self, position: &[f64; 3], radius: &f64) -> bool {todo!("check_ball")}
-
+    !(// negotiation of the conditions, to return false, if any of them is true
+      radius <= &0.0
+      || distance_to_sun > self.light.power
+      || c.d_mat(&camera_front_plane) < *radius
+      || c.d_mat(&camera_front_plane) >= *radius && c.is_below(&camera_front_plane)
+      || c.d_mat(&camera_left_plane) >= *radius && c.is_below(&camera_left_plane)
+      || c.d_mat(&camera_right_plane) >= *radius && c.is_below(&camera_right_plane)
+      || c.d_mat(&camera_top_plane) >= *radius && c.is_below(&camera_top_plane)
+      || c.d_mat(&camera_bottom_plane) >= *radius && c.is_below(&camera_bottom_plane)
+    )
+  }
+  
   fn check_box(&self, position: &[f64; 3], size: &f64) -> bool {todo!("check_box")}
-
+  
   fn check_roll(&self, position: &[f64; 3], radius: &f64, height: &f64) -> bool {todo!("check_roll")}
-
+  
 }
