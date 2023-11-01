@@ -46,7 +46,7 @@ impl Dot {
   pub fn to_vec(&self) -> Vec<f64> { vec![self.x, self.y, self.z] }
 
   pub fn from_spear(s: Spear) -> Dot { Dot::new(s.x, s.y, s.z) }
-  pub fn to_spear(&self) -> Spear { Spear::new(self.x, self.y, self.z) }
+  pub fn to_spear(&self) -> Spear { Spear{x:self.x, y:self.y, z:self.z} }
   
   pub fn add(&self, o: &Dot) -> Dot {
     Dot::new( self.x + o.x, self.y + o.y, self.z + o.z )
@@ -135,19 +135,26 @@ impl Dot {
 
   /// check the dot is above the plane, along plane normal
   pub fn is_above(&self, p: &Mat) -> bool {
-    //todo: crap, fails detected
     p.normal.scalar(&self.to_spear()) + p.d > 0.0
+    // let d_mat = self.d_mat(p);
+    // println!("p.normal: {:#?}", p.normal);
+    // println!("p.origin: {:#?}", p.origin);
+    // println!("self: {:#?}", self);
+    // println!("d_mat: {}", d_mat);
+    // let step_forward = self.offset(&p.normal, d_mat/2_f64);
+    // println!("step_forward: {:#?}", step_forward);
+    // let d_forward = step_forward.d_mat(p);
+    // println!("d_forward: {}", d_forward);
+    // d_forward > d_mat
   }
 
   /// check the dot is below the plane, along plane normal
   pub fn is_below(&self, p: &Mat) -> bool {
-    //todo: crap, fails detected
     p.normal.scalar(&self.to_spear()) + p.d < 0.0
   }
 
   /// check the dot is in the plane
   pub fn is_part_of(&self, p: &Mat) -> bool {
-    //todo: crap, fails detected
     p.normal.scalar(&self.to_spear()) + p.d == 0.0
   }
   

@@ -32,6 +32,10 @@ impl Spear {
   pub fn from_array(a: [f64; 3]) -> Spear {
     Spear::new(a[0], a[1], a[2])
   }
+  pub fn to_array(&self) -> [f64; 3] { [self.x, self.y, self.z] }
+
+  pub fn from_dot(d: Dot) -> Spear { Spear{x:d.x, y:d.y, z:d.z} }
+  pub fn to_dot(&self) -> Dot { Dot::new(self.x, self.y, self.z) }
 
   /// new vector. \[ from_position, to_position \]. Will be recalculated to unit vector (absolute length 1)
   pub fn pp(pp: &[Dot;2]) -> Spear {

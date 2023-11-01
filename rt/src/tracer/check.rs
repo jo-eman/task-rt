@@ -47,7 +47,7 @@ impl Scene {
     p.is_ll(&camera_right_plane) && !p.origin.is_above(&camera_right_plane) ||
     p.is_ll(&camera_top_plane) && !p.origin.is_above(&camera_top_plane) ||
     p.is_ll(&camera_bottom_plane) && !p.origin.is_above(&camera_bottom_plane)
-    
+
   }
 
   fn check_ball(&self, position: &[f64; 3], radius: &f64) -> bool {todo!("check_ball")}
