@@ -34,14 +34,19 @@ impl Scene {
       Dot::from_array(*position),
       Spear::from_array(*normal)
     );
+
+
     
     let camera_front_plane = self.camera_front_plane();
     let camera_left_plane = self.camera_left_plane();
     let camera_right_plane = self.camera_right_plane();
     let camera_top_plane = self.camera_top_plane();
     let camera_bottom_plane = self.camera_bottom_plane();
+    // if plane is zero, then ignore it
+    // if plane is too far from the light, then ignore it
     // if plane is below any camera planes, or the same as any camera plane, then ignore it
     p.is_zero() ||
+    Dot::from_array(self.light.position).d_mat(&p) > self.light.power ||
     p.is_ll(&camera_front_plane) && !p.origin.is_above(&camera_front_plane) ||
     p.is_ll(&camera_left_plane) && !p.origin.is_above(&camera_left_plane) ||
     p.is_ll(&camera_right_plane) && !p.origin.is_above(&camera_right_plane) ||

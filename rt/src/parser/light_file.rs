@@ -5,9 +5,9 @@ use std::io::{BufRead, BufReader};
 #[derive(Debug)]
 pub struct Light {
   // Define fields for Light
-  pub power: u8,
+  pub power: f64,
   pub color: [u8; 3],
-  pub position: [i32; 3],
+  pub position: [f64; 3],
 }
 
 // Implement Light parser
@@ -18,9 +18,9 @@ impl Light {
     let reader = BufReader::new(file);
     
     // Initialize variables to store parsed values
-    let mut power = 0;
+    let mut power = 0.0;
     let mut color = [0; 3];
-    let mut position = [0; 3];
+    let mut position = [0.0; 3];
     
     // Flags to check if parameters are parsed
     let mut power_parsed = false;
@@ -35,8 +35,8 @@ impl Light {
       }
       match words[0] {
         "power" if !power_parsed && words.len() == 2 => {
-          power = words[1].parse::<u8>().map_err(|_| {
-            "Power must be an integer 0 to 255".to_string()
+          power = words[1].parse::<f64>().map_err(|_| {
+            "Power must be a positive integer".to_string()
           })?;
           power_parsed = true;
         }
@@ -50,9 +50,9 @@ impl Light {
         }
         "from" if !from_parsed && words.len() == 4 => {
           position = [
-          words[1].parse::<i32>().map_err(|_| "Position x must be an integer".to_string())?,
-          words[2].parse::<i32>().map_err(|_| "Position y must be an integer".to_string())?,
-          words[3].parse::<i32>().map_err(|_| "Position z must be an integer".to_string())?,
+          words[1].parse::<f64>().map_err(|_| "Position x must be an integer".to_string())?,
+          words[2].parse::<f64>().map_err(|_| "Position y must be an integer".to_string())?,
+          words[3].parse::<f64>().map_err(|_| "Position z must be an integer".to_string())?,
           ];
           from_parsed = true;
         }
@@ -64,7 +64,7 @@ impl Light {
     }
     
     if !power_parsed {
-      return Err("Light power [power 0-255] is not specified".to_string());
+      return Err("Light power [positive integer distance] is not specified".to_string());
     }
     
     if !color_parsed {
