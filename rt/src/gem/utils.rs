@@ -1,6 +1,33 @@
-use super::gem::Gem;
+use super::{gem::Gem, spear::Spear, mat::Mat, dot::Dot};
 
 impl Gem {
+
+  /// intersection of ray and plane
+  pub fn ray_x_mat(ray: &Mat, mat: &Mat) -> Dot {
+    let tup = -(
+      mat.normal.x * ray.origin.x +
+      mat.normal.y * ray.origin.y +
+      mat.normal.z * ray.origin.z +
+      mat.d
+    );
+    let tdn = (
+      mat.normal.x * ray.normal.x +
+      mat.normal.y * ray.normal.y +
+      mat.normal.z * ray.normal.z
+    );
+
+    if tdn == 0.0 {return Dot::maximum()}
+    if tup == 0.0 {return ray.origin}
+
+    let t = tup / tdn;
+
+    Dot::new(
+      ray.origin.x + ray.normal.x * t,
+      ray.origin.y + ray.normal.y * t,
+      ray.origin.z + ray.normal.z * t,
+    )
+
+  }
 
   /// convert radians to degrees
   pub fn degrees(angle_radians: f64) -> f64 {
