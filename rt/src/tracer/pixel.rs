@@ -37,19 +37,23 @@ impl RGB {
   
   /// crete color affected by the light power (simple simulation, not a proper one)
   pub fn power_affected(
-    r:u8, g:u8, b:u8,
-    position:Dot,
-    light_position: Dot,
+    rgb:[u8;3],
+    color_position:Dot,
+    light_source_position: Dot,
+    light_color: RGB,
     light_power_distance: f64,
   ) -> RGB {
-    let mut rgb = RGB::new(r, g, b);
-    let distance = position.d_dot(&light_position);
+    let mut rgb = RGB::from_array(&rgb);
+    let distance = color_position.d_dot(&light_source_position);
     if distance < light_power_distance {
       let power = (light_power_distance - distance) / light_power_distance;
+      let shade_r = light_color.r as f64 / 255_f64;
+      let shade_g = light_color.g as f64 / 255_f64;
+      let shade_b = light_color.b as f64 / 255_f64;
       
-      rgb.r = (rgb.r as f64 * power) as u8;
-      rgb.g = (rgb.g as f64 * power) as u8;
-      rgb.b = (rgb.b as f64 * power) as u8;
+      rgb.r = (rgb.r as f64 * power * shade_r) as u8;
+      rgb.g = (rgb.g as f64 * power * shade_g) as u8;
+      rgb.b = (rgb.b as f64 * power * shade_b) as u8;
       
       rgb
     } else { RGB::background() }
@@ -109,7 +113,13 @@ impl Scene {
         let mat_normal = Spear::from_array(*normal);
         let xyz = Gem::ray_x_mat(&ray, &Mat::new(mat_origin, mat_normal));
         (
-          RGB::from_array(color),
+          RGB::power_affected(
+            *color,
+            xyz,
+            light_position,
+            RGB::from_array(&self.light.color),
+            self.light.power
+          ),
           xyz
         )
         
@@ -117,12 +127,17 @@ impl Scene {
       _ => {(RGB::background(), Dot::maximum())}
     };
     
-    let (mut color, mut position) = (RGB::background(), Dot::maximum());
+    let (mut pixel_color, mut pixel_position) = (RGB::background(), Dot::maximum());
 
     if obj_pixel_position.d_dot(&light_position) <= self.light.power{
-      (color, position) = (obj_pixel_color, obj_pixel_position);
+      (pixel_color, pixel_position) = (obj_pixel_color, obj_pixel_position);
     }
-    (color, position) //todo: remove. dev gap
+
+    // here, build the ray to light source, iterate the other objects , and
+    // if there is some other intersection closer to light source than
+    // obj_pixel_position, than implement dark_side method to slow down the color
+
+    (pixel_color, pixel_position) //todo: remove. dev gap
   }
   
 }
