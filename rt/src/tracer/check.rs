@@ -1,6 +1,6 @@
 use crate::{parser::objects_file::Objects, gem::{mat::Mat, dot::Dot, spear::Spear}};
 
-use super::{scene::Scene, camera};
+use super::scene::Scene;
 
 impl Scene {
   /// check if the object is good to trace, otherwise ignore it.
@@ -136,7 +136,9 @@ impl Scene {
     good_number: usize,
     bad_number: usize
   ) {
-    println!("objects: {}, good: {}, bad: {}", objects_number, good_number, bad_number);
+    let stats = format!("= objects: {}, good: {}, bad: {} =", objects_number, good_number, bad_number);
+    let line = "=".repeat(stats.len());
+    println!("{}\n{}\n{}", line, stats, line);
   }
 
 }

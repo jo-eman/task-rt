@@ -30,6 +30,14 @@ impl Mat {
     }
     
   }
+
+  /// create plane from 2 dots
+  pub fn pp(origin: Dot, normal_direction: Dot) -> Mat {
+    let normal = Spear::pp( &[ origin, normal_direction, ] );
+
+    Mat::new(origin, normal)
+
+  }
   
   pub fn zero() -> Mat {
     Mat {

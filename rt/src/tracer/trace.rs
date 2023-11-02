@@ -16,10 +16,10 @@ impl Scene {
     let height = camera.height;
 
     // data to be returned
-    let mut data = vec![0; (width * height * 3) as usize];
+    let mut data = vec![0u8; width * height * 3];
 
     // clear the objects, remove the objects that are not good to trace
-    let objects = self.good_to_trace(objects);
+    let good_to_trace = self.good_to_trace(objects);
 
     // iterate over the pixels of the camera to create rays
     for row in 0..height {
@@ -27,16 +27,24 @@ impl Scene {
         // index of the pixel in the data array
         let index = ((row * width + col) * 3) as usize;
 
-        // create ray from the camera to the pixel
-        
+        // find the pixel color for the ray
+        let color = self.pixel_color(row, col, &good_to_trace);
+
+        // set the pixel color in the data array
+        data[index] = color.r;
+        data[index + 1] = color.g;
+        data[index + 2] = color.b;
 
       }
     }
 
-    self.dev_check_dot_above_below_plane();//todo: remove. dev stuff
-    self.dev_print(); //todo: remove. dev stuff
+    // self.dev_check_dot_above_below_plane();//todo: remove. dev stuff
+    // self.dev_print(); //todo: remove. dev stuff
 
-    self.dummy_trace() //todo dev gap
+    // self.dummy_trace() //todo dev gap
+
+    // return the data
+    data
   }
 
 }

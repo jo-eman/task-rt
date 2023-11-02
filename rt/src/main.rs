@@ -7,10 +7,11 @@ mod parser {
 }
 
 mod tracer {
+  pub mod camera;
+  pub mod check;
+  pub mod pixel;
   pub mod scene;
   pub mod trace;
-  pub mod check;
-  pub mod camera;
 }
 
 mod printer {

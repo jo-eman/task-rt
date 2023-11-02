@@ -222,5 +222,29 @@ impl Scene {
     self.camera_right_top_pixel().offset(&self.camera_up_vector().back(), (self.camera.height - 1) as f64)
   }
 
+  /// ray from the camera zoom position to the pixel of the camera screen
+  /// 
+  /// calculated using displacement from the camera top left pixel
+  /// 
+  /// to down and right, according to the row and column
+  pub fn camera_ray_to_pixel(&self, row: usize, col: usize) -> Mat {
+    let camera_zoom_position = self.camera_zoom_position();
+    let camera_left_top_pixel = self.camera_left_top_pixel();
+    let camera_screen_pixel = camera_left_top_pixel
+    .offset( // offset down
+      &self.camera_up_vector().back(),
+      row as f64
+    )
+    .offset( // offset right
+      &self.camera_left_vector().back(),
+      col as f64
+    );
+    
+    Mat::pp(
+      camera_zoom_position,
+      camera_screen_pixel,
+    )
+
+  }
 
 }

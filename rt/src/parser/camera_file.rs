@@ -1,12 +1,12 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-const MAX_OUTPUT_PICTURE_SIDE_SIZE: i32 = 1024;
+const MAX_OUTPUT_PICTURE_SIDE_SIZE:usize  = 1024;
 
 #[derive(Debug)]
 pub struct Camera {
-  pub width: i32,
-  pub height: i32,
+  pub width: usize,
+  pub height: usize,
   pub output_file_name: String,
   pub zoom: usize, // displacement of rays start point from camera position to back
   pub position: [f64; 3],
@@ -43,7 +43,7 @@ impl Camera {
           zoom = words[1].parse::<usize>().map_err(|_| {
             "Zoom must be greater than zero".to_string()
           })?;
-          if zoom < 1 || zoom > usize::MAX {
+          if zoom < 1 || zoom > MAX_OUTPUT_PICTURE_SIDE_SIZE {
             return Err(
               format!(
                 "Zoom must be between 1 and {}", MAX_OUTPUT_PICTURE_SIDE_SIZE.pow(2)
@@ -78,19 +78,19 @@ impl Camera {
         }
         "#" => {}
         _ if words.len() == 3 && !output_parsed => {
-          width = words[0].parse::<i32>().map_err(|_| {
+          width = words[0].parse::<usize>().map_err(|_| {
             "Width must be an integer greater than 0".to_string()
           })?;
-          if width <= 0 || width > MAX_OUTPUT_PICTURE_SIDE_SIZE {
+          if width < 1 || width > MAX_OUTPUT_PICTURE_SIDE_SIZE {
             return Err(format!(
               "Width must be an integer between 1 and {}",
               MAX_OUTPUT_PICTURE_SIDE_SIZE
             ));
           }
-          height = words[1].parse::<i32>().map_err(|_| {
+          height = words[1].parse::<usize>().map_err(|_| {
             "Height must be an integer greater than 0".to_string()
           })?;
-          if height <= 0 || height > MAX_OUTPUT_PICTURE_SIDE_SIZE {
+          if height < 1 || height > MAX_OUTPUT_PICTURE_SIDE_SIZE {
             return Err(format!(
               "Height must be an integer between 1 and {}",
               MAX_OUTPUT_PICTURE_SIDE_SIZE
