@@ -3,7 +3,7 @@ use super::spear::Spear;
 use super::dot::Dot;
 
 /// 3d plane(flat surface) implementation
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Mat {
   pub a: f64,
   pub b: f64,
