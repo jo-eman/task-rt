@@ -37,6 +37,13 @@ impl Spear {
   pub fn from_dot(d: Dot) -> Spear { Spear{x:d.x, y:d.y, z:d.z} }
   pub fn to_dot(&self) -> Dot { Dot::new(self.x, self.y, self.z) }
 
+  /// axis x vector (1.0, 0.0, 0.0)
+  pub fn ox() -> Spear { Spear::new(1.0, 0.0, 0.0) }
+  /// axis y vector (0.0, 1.0, 0.0)
+  pub fn oy() -> Spear { Spear::new(0.0, 1.0, 0.0) }
+  /// axis z vector (0.0, 0.0, 1.0)
+  pub fn oz() -> Spear { Spear::new(0.0, 0.0, 1.0) }
+
   /// new vector. \[ from_position, to_position \]. Will be recalculated to unit vector (absolute length 1)
   pub fn pp(pp: &[Dot;2]) -> Spear {
     Spear::new(

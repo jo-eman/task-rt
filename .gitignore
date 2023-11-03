@@ -23,3 +23,6 @@ ppm/
 
 # ignore executable copied from release folder to root level
 we
+
+# ignore debug output
+debug.txt

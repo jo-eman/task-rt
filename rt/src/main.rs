@@ -1,3 +1,4 @@
+mod debug;
 mod gem;
 
 mod parser {
@@ -24,8 +25,11 @@ use parser::camera_file::Camera;
 use parser::light_file::Light;
 use parser::objects_file::Objects;
 use printer::ppm::generate_ppm_file;
+use debug:: try_recreate_file_according_to_value_of_debug_boolean;
 
 fn main() {
+  try_recreate_file_according_to_value_of_debug_boolean();
+
   let args: Vec<String> = env::args().collect();
   if args.len() != 4 {
     println!("Usage: ./we <camera_file> <light_file> <objects_file>");

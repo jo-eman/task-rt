@@ -1,3 +1,5 @@
+use crate::debug::append_to_file;
+
 use super::{gem::Gem, spear::Spear, mat::Mat, dot::Dot};
 
 impl Gem {
@@ -80,44 +82,65 @@ impl Gem {
   /// the size is the length of the edge of the cube. So it is width, height and depth, in one value.
   pub fn ray_x_box(ray: &Mat, box_center:&Dot, box_size:f64) -> Dot {
     let s = box_size.abs().half(); // just for case of an idiot. Lazy to check the difference
+
+    // create two positions, which will restrict the values for x, y and z
+    // from minimum to maximum
     let pmin = Dot::new(box_center.x - s, box_center.y - s, box_center.z - s,);
     let pmax = Dot::new(box_center.x + s, box_center.y + s, box_center.z + s,);
 
-    let v = ray.normal;
-    let o = ray.origin;
-    let t1_min = (pmin.x - o.x) / v.x;
-    let t1_max = (pmax.x - o.x) / v.x;
+    // create x6 planes, to simulate the cube surface. Each plane is a Mat
+    let px_min = Mat::new( pmin, Spear::ox().back());
+    let px_max = Mat::new( pmax, Spear::ox());
+    let py_min = Mat::new( pmin, Spear::oy().back());
+    let py_max = Mat::new( pmax, Spear::oy());
+    let pz_min = Mat::new( pmin, Spear::oz().back());
+    let pz_max = Mat::new( pmax, Spear::oz());
 
-    let t2_min = (pmin.y - o.y) / v.y;
-    let t2_max = (pmax.y - o.y) / v.y;
+    // check the ray intersection with each plane
+    let hit_x_min = Gem::ray_x_mat(ray, &px_min);
+    let hit_x_max = Gem::ray_x_mat(ray, &px_max);
+    let hit_y_min = Gem::ray_x_mat(ray, &py_min);
+    let hit_y_max = Gem::ray_x_mat(ray, &py_max);
+    let hit_z_min = Gem::ray_x_mat(ray, &pz_min);
+    let hit_z_max = Gem::ray_x_mat(ray, &pz_max);
 
-    let t3_min = (pmin.z - o.z) / v.z;
-    let t3_max = (pmax.z - o.z) / v.z;
+    // check the intersection points are on the cube surface,
+    // and return the nearest one(the valid area of each plane
+    // restricted by x4 planes around, but in our case of placement the cube
+    // along axes, enough just restrict the intersecion by min max coordinates)
+    let mut hit = Dot::maximum();
 
-    let t_min = t1_min.max(t2_min).max(t3_min);
-    let t_max = t1_max.min(t2_max).min(t3_max);
+    if hit_x_min.y >= pmin.y && hit_x_min.y <= pmax.y
+    && hit_x_min.z >= pmin.z && hit_x_min.z <= pmax.z
+    && hit.d_dot(&ray.origin) > hit_x_min.d_dot(&ray.origin)
+    {hit = hit_x_min.same()}
 
-    if t_min > t_max || t_max < 0.0 {
-      // println!("ray_x_box no intersections fires");
-      return Dot::maximum()
-    }
+    if hit_x_max.y >= pmin.y && hit_x_max.y <= pmax.y
+    && hit_x_max.z >= pmin.z && hit_x_max.z <= pmax.z
+    && hit.d_dot(&ray.origin) > hit_x_max.d_dot(&ray.origin)
+    {hit = hit_x_max.same()}
 
-    let p1 = Dot::new(
-      o.x + t_min * v.x,
-      o.y + t_min * v.y,
-      o.z + t_min * v.z,
-    );
+    if hit_y_min.x >= pmin.x && hit_y_min.x <= pmax.x
+    && hit_y_min.z >= pmin.z && hit_y_min.z <= pmax.z
+    && hit.d_dot(&ray.origin) > hit_y_min.d_dot(&ray.origin)
+    {hit = hit_y_min.same()}
 
-    let p2 = Dot::new(
-      o.x + t_max * v.x,
-      o.y + t_max * v.y,
-      o.z + t_max * v.z,
-    );
+    if hit_y_max.x >= pmin.x && hit_y_max.x <= pmax.x
+    && hit_y_max.z >= pmin.z && hit_y_max.z <= pmax.z
+    && hit.d_dot(&ray.origin) > hit_y_max.d_dot(&ray.origin)
+    {hit = hit_y_max.same()}
 
-    println!("ray_x_box p1: {:#?}", p1);
-    println!("ray_x_box p2: {:#?}", p2);
+    if hit_z_min.x >= pmin.x && hit_z_min.x <= pmax.x
+    && hit_z_min.y >= pmin.y && hit_z_min.y <= pmax.y
+    && hit.d_dot(&ray.origin) > hit_z_min.d_dot(&ray.origin)
+    {hit = hit_z_min.same()}
 
-    if p1.d_dot(&o) < p2.d_dot(&o) {p1} else {p2}
+    if hit_z_max.x >= pmin.x && hit_z_max.x <= pmax.x
+    && hit_z_max.y >= pmin.y && hit_z_max.y <= pmax.y
+    && hit.d_dot(&ray.origin) > hit_z_max.d_dot(&ray.origin)
+    {hit = hit_z_max.same()}
+
+    hit
 
   }
 

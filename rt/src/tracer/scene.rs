@@ -68,8 +68,8 @@ impl Scene {
 
   pub fn check_ray_x_box(&self){
     let ray = Mat::new(
-      Dot::new(0.0,0.0,-50.0),
-      Spear::new(0.0,0.0,1.0),
+      Dot::new(0.0,0.0,50.0),
+      Spear::new(0.0,0.0,-1.0),
       );
     let box_center = Dot::new(0.0,0.0,0.0);
     let p = Gem::ray_x_box(&ray, &box_center, 10f64);
