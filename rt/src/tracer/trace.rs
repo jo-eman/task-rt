@@ -38,6 +38,7 @@ impl Scene {
       }
     }
 
+    self.check_ray_x_box();
     // self.dev_check_dot_above_below_plane();//todo: remove. dev stuff
     // self.dev_print(); //todo: remove. dev stuff
 

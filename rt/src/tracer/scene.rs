@@ -1,6 +1,6 @@
 use crate::{
   parser::{ camera_file::Camera, light_file::Light, objects_file::Objects },
-  gem::{dot::Dot, spear::Spear, mat::Mat}
+  gem::{dot::Dot, spear::Spear, mat::Mat, gem::Gem}
 };
 
 pub struct Scene {
@@ -64,6 +64,17 @@ impl Scene {
     println!("false is {}",dot_in.is_above(&p));
     println!("false is {}",dot_in.is_below(&p));
 
+  }
+
+  pub fn check_ray_x_box(&self){
+    let ray = Mat::new(
+      Dot::new(0.0,0.0,-50.0),
+      Spear::new(0.0,0.0,1.0),
+      );
+    let box_center = Dot::new(0.0,0.0,0.0);
+    let p = Gem::ray_x_box(&ray, &box_center, 10f64);
+    println!("check_ray_x_box p: {:#?}", p);
+    
   }
 
 }

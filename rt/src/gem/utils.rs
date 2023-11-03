@@ -72,6 +72,55 @@ impl Gem {
     
   }
 
+  /// intersection of ray and cube.
+  /// 
+  /// The cube(box) is oriented along axes, it does not break any requirements of the task.
+  /// The target is ray tracing, not cube rotating.
+  /// 
+  /// the size is the length of the edge of the cube. So it is width, height and depth, in one value.
+  pub fn ray_x_box(ray: &Mat, box_center:&Dot, box_size:f64) -> Dot {
+    let s = box_size.abs().half(); // just for case of an idiot. Lazy to check the difference
+    let pmin = Dot::new(box_center.x - s, box_center.y - s, box_center.z - s,);
+    let pmax = Dot::new(box_center.x + s, box_center.y + s, box_center.z + s,);
+
+    let v = ray.normal;
+    let o = ray.origin;
+    let t1_min = (pmin.x - o.x) / v.x;
+    let t1_max = (pmax.x - o.x) / v.x;
+
+    let t2_min = (pmin.y - o.y) / v.y;
+    let t2_max = (pmax.y - o.y) / v.y;
+
+    let t3_min = (pmin.z - o.z) / v.z;
+    let t3_max = (pmax.z - o.z) / v.z;
+
+    let t_min = t1_min.max(t2_min).max(t3_min);
+    let t_max = t1_max.min(t2_max).min(t3_max);
+
+    if t_min > t_max || t_max < 0.0 {
+      // println!("ray_x_box no intersections fires");
+      return Dot::maximum()
+    }
+
+    let p1 = Dot::new(
+      o.x + t_min * v.x,
+      o.y + t_min * v.y,
+      o.z + t_min * v.z,
+    );
+
+    let p2 = Dot::new(
+      o.x + t_max * v.x,
+      o.y + t_max * v.y,
+      o.z + t_max * v.z,
+    );
+
+    println!("ray_x_box p1: {:#?}", p1);
+    println!("ray_x_box p2: {:#?}", p2);
+
+    if p1.d_dot(&o) < p2.d_dot(&o) {p1} else {p2}
+
+  }
+
   /// convert radians to degrees
   pub fn degrees(angle_radians: f64) -> f64 {
     angle_radians * 180.0 / std::f64::consts::PI
@@ -106,11 +155,16 @@ pub trait F64xyz {
   /// So this function was created keep value inside range
   /// from -1.0 to 1.0
   fn cut(self) -> f64;
+
+  /// half of the value(multiply by 0.5)
+  fn half(self) -> f64;
 }
 
 impl F64xyz for f64 {
   fn xyz(self) -> f64 { self.min(f64::max_xyz()).max(f64::min_xyz()) }
 
   fn cut(self) -> f64 { self.max(-1.0).min(1.0) }
+
+  fn half(self) -> f64 { self * 0.5 }
 
 }
