@@ -164,7 +164,6 @@ impl Scene {
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
         Objects::Box { color, position, size } => {
-          //todo: something wrong here, not affecting the scene
           let box_center = Dot::from_array(position);
           let xyz = Gem::ray_x_box(&ray_to_light, &box_center, size);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
