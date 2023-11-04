@@ -249,10 +249,7 @@ impl Gem {
       let dot_on_ray = dot_on_cylinder_axis.p_mat(&ray_mat_ll_cylinder_axis);
 
       // the distance to offset the dot_on_ray(in two directions), to get the intersection point
-      let d = if distance == 0.0 {0.0}
-      else {
-        (radius.powi(2) - distance.powi(2)).sqrt()
-      };
+      let d =  (radius.powi(2) - distance.powi(2)).sqrt();
 
       let mut p1 = dot_on_ray.offset(&ray.normal, d);
       let mut p2 = dot_on_ray.offset(&ray.normal, -d);

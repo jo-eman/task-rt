@@ -43,10 +43,10 @@ impl Camera {
           zoom = words[1].parse::<usize>().map_err(|_| {
             "Zoom must be greater than zero".to_string()
           })?;
-          if zoom < 1 || zoom > MAX_OUTPUT_PICTURE_SIDE_SIZE {
+          if zoom < 1 || zoom > MAX_OUTPUT_PICTURE_SIDE_SIZE.pow(2) {
             return Err(
               format!(
-                "Zoom must be between 1 and {}", MAX_OUTPUT_PICTURE_SIDE_SIZE.pow(2)
+                "Zoom {} must be between 1 and {}", zoom, MAX_OUTPUT_PICTURE_SIDE_SIZE.pow(2)
               )
             );
           }
