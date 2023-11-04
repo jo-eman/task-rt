@@ -4,8 +4,10 @@
 # mat: color, coordinates, normal vector coordinates(started from zero point of the global coordinates). It is like short name of the flat plane with color
 # 255 255 0 ball 0 0 5 10
 # 0 255 255 box 0 0 0 2
-# 255 0 255 roll 0 0 0 2 2
 # 0 255 0 mat 0 0 0 0 0 1
 0 0 255 mat 0 0 500 0 1 1
-255 255 0 ball -20 0 25 10
-200 255 255 box 20 0 25 10
+# 255 255 0 ball 10 0 25 10
+# 200 255 255 box 20 0 25 10
+255 0 255 roll 0 1 30 10 20
+255 0 255 roll 10 20 30 10 20
+255 0 255 roll 30 30 30 10 20

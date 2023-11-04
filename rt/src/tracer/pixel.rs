@@ -113,7 +113,7 @@ impl Scene {
       Objects::Mat { color, position, normal } => {
         let mat_origin = Dot::from_array(position);
         let mat_normal = Spear::from_array(normal);
-        let xyz = Gem::ray_x_mat(&ray, &Mat::new(mat_origin, mat_normal));
+        let xyz = Gem::line_x_mat(&ray, &Mat::new(mat_origin, mat_normal));
         (
           RGB::power_affected(
             color,
@@ -155,7 +155,7 @@ impl Scene {
         Objects::Mat { color, position, normal } => {
           let mat_origin = Dot::from_array(position);
           let mat_normal = Spear::from_array(normal);
-          let xyz = Gem::ray_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
+          let xyz = Gem::line_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
         Objects::Ball { color, position, radius } => {
@@ -169,7 +169,9 @@ impl Scene {
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
         Objects::Roll { color, position, radius, height } => {
-          //todo: implement
+          let roll_center = Dot::from_array(position);
+          let xyz = Gem::ray_x_roll(&ray_to_light, &roll_center, radius, height);
+          if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
       }
     }

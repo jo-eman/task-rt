@@ -4,8 +4,11 @@ use super::{gem::Gem, spear::Spear, mat::Mat, dot::Dot};
 
 impl Gem {
 
-  /// intersection of ray and plane
-  pub fn ray_x_mat(ray: &Mat, mat: &Mat) -> Dot {
+  /// intersection of line and plane. Both directions considered.
+  /// So the ray_x_mat case requires additional check for the ray direction.
+  /// Can be solved by using Dot::offset method, for the plane,
+  /// and then check the distances. It can be little bit tricky
+  pub fn line_x_mat(ray: &Mat, mat: &Mat) -> Dot {
     let tup = -(
       mat.normal.x * ray.origin.x +
       mat.normal.y * ray.origin.y +
@@ -37,6 +40,9 @@ impl Gem {
   /// 
   /// If there is no intersection than return Dot::maximum(), to avoid brainfuck
   pub fn ray_x_ball(ray: &Mat, center:&Dot, radius:f64) -> Dot {
+    // check an idiot case
+    let radius = (radius.xyz().abs()+1.0).xyz()-1.0;
+
     // vector from the ball's center to the ray's origin. Just for case without unit autoconvertion, so Spear is not used. Just components separately
     let x = ray.origin.x - center.x;
     let y = ray.origin.y - center.y;
@@ -81,7 +87,8 @@ impl Gem {
   /// 
   /// the size is the length of the edge of the cube. So it is width, height and depth, in one value.
   pub fn ray_x_box(ray: &Mat, box_center:&Dot, box_size:f64) -> Dot {
-    let s = box_size.abs().half(); // just for case of an idiot. Lazy to check the difference
+    // check an idiot case
+    let s = ((box_size.xyz().abs()+1.0).xyz()-1.0).half();
 
     // create two positions, which will restrict the values for x, y and z
     // from minimum to maximum
@@ -97,12 +104,12 @@ impl Gem {
     let pz_max = Mat::new( pmax, Spear::oz());
 
     // check the ray intersection with each plane
-    let hit_x_min = Gem::ray_x_mat(ray, &px_min);
-    let hit_x_max = Gem::ray_x_mat(ray, &px_max);
-    let hit_y_min = Gem::ray_x_mat(ray, &py_min);
-    let hit_y_max = Gem::ray_x_mat(ray, &py_max);
-    let hit_z_min = Gem::ray_x_mat(ray, &pz_min);
-    let hit_z_max = Gem::ray_x_mat(ray, &pz_max);
+    let hit_x_min = Gem::line_x_mat(ray, &px_min);
+    let hit_x_max = Gem::line_x_mat(ray, &px_max);
+    let hit_y_min = Gem::line_x_mat(ray, &py_min);
+    let hit_y_max = Gem::line_x_mat(ray, &py_max);
+    let hit_z_min = Gem::line_x_mat(ray, &pz_min);
+    let hit_z_max = Gem::line_x_mat(ray, &pz_max);
 
     // check the intersection points are on the cube surface,
     // and return the nearest one(the valid area of each plane
@@ -141,6 +148,131 @@ impl Gem {
     {hit = hit_z_max.same()}
 
     hit
+
+  }
+
+  /// intersection of ray and cylinder.
+  ///
+  /// The cylinder is oriented along axes,
+  /// it does not break any requirements of the task.
+  /// The height is along the y axis.
+  /// The target is ray tracing, not cylinder rotating.
+  /// 
+  /// the radius is the radius of the cylinder.
+  /// the height is the height of the cylinder.
+  pub fn ray_x_roll(ray: &Mat, roll_center:&Dot, radius:f64, height:f64) -> Dot {
+
+    let mut nearest_intersection = Dot::maximum();
+    // check an idiot case
+    let radius = (radius.xyz().abs()+1.0).xyz()-1.0;
+    let height = (height.xyz().abs()+1.0).xyz()-1.0;
+
+    // first check top and bottom gaps intersection
+
+    // top gap intersection position
+    let top_gap_origin = Dot::new(roll_center.x, roll_center.y + height.half(), roll_center.z);
+    let top_gap_mat = Mat::new(top_gap_origin, Spear::oy());
+    let mut top_gap_xyz = Gem::line_x_mat(ray, &top_gap_mat);
+    // now check the intersection is inside the gap, restricted by radius
+    if top_gap_xyz.d_dot(&top_gap_origin) > radius {top_gap_xyz = Dot::maximum()}
+
+    // bottom gap intersection position
+    let bottom_gap_origin = Dot::new(roll_center.x, roll_center.y - height.half(), roll_center.z);
+    let bottom_gap_mat = Mat::new(bottom_gap_origin, Spear::oy().back());
+    let mut bottom_gap_xyz = Gem::line_x_mat(ray, &bottom_gap_mat);
+    // now check the intersection is inside the gap, restricted by radius
+    if bottom_gap_xyz.d_dot(&bottom_gap_origin) > radius {bottom_gap_xyz = Dot::maximum()}
+
+    // if the both gap intersections are inside the radius than
+    // return the nearest one because the ray hit cylinder through the gaps
+    // else if one of the gap intersections is inside the radius than
+    // set the nearest intersection to this gap intersection
+    let d_top = top_gap_xyz.d_dot(&ray.origin);
+    let d_bottom = bottom_gap_xyz.d_dot(&ray.origin);
+
+    if !top_gap_xyz.is_maximum() && !bottom_gap_xyz.is_maximum() {
+      if d_top < d_bottom {
+        return top_gap_xyz.same()
+      }
+      else {
+        return bottom_gap_xyz.same()
+      }
+    } else { // at least one of the gap intersections is outside the radius
+      nearest_intersection = if d_top < d_bottom {
+        top_gap_xyz.same()
+      } else {
+        bottom_gap_xyz.same()
+      }
+    }
+
+    // now, when at least one gap intersection is outside the radius,
+    // CHECK THE CYLINDER SIDE(ROLL) SURFACE INTERSECTION
+
+    // roll_axis is the vector along the cylinder axis
+    let roll_axis = Spear::oy();
+
+    // normal to both roll_axis and ray vector, to calculate , later, the shortest distance between ray and cylinder axis
+    let normal_to_axes = roll_axis.normal(&ray.normal);
+    // it is ok if this will return zero vector,
+    // finally the distance will be maximum possible inside the limits,
+    // so, with high chance greater than radius.
+    // But case of an idiot(super giant cylinder radius) still possible.
+
+    // the plane which is parallel to the cylinder axis, contains the cylinder axis, and parallel to the ray
+    let roll_axis_mat = Mat::new(roll_center.same(), normal_to_axes);
+
+    // distance between ray and cylinder axis
+    let distance = ray.origin.d_mat(&roll_axis_mat);
+
+    if distance <= radius {
+      // the ray is close enough to the cylinder axis, so it can hit the cylinder side(roll) surface}
+
+      // the plane which is parallel to the cylinder axis and contains ray
+      let ray_mat_ll_cylinder_axis = Mat::new(ray.origin.same(), normal_to_axes);
+
+      // the plane which is contains the ray and contains the normal_to_axes.
+      // It is the plane which intersects the cylinder axis
+      let mat_of_intersection = Mat::new(ray.origin.same(), ray.normal.normal(&normal_to_axes));
+
+      // dot on the cylinder axis, which is the intersection of the cylinder axis and the mat_of_intersection plane
+      let dot_on_cylinder_axis = Gem::line_x_mat(
+        &Mat::new(
+          roll_center.same(),
+          Spear::oy()),
+        &mat_of_intersection
+      );
+
+      // the dot, which is projection of the dot_on_cylinder_axis on the
+      // ray_mat_ll_cylinder_axis plane. This is the dot on the ray, which is
+      // the center between the two intersection points of the ray and
+      // the cylinder side(roll) surface
+      let dot_on_ray = dot_on_cylinder_axis.p_mat(&ray_mat_ll_cylinder_axis);
+
+      // the distance to offset the dot_on_ray(in two directions), to get the intersection point
+      let d = if distance == 0.0 {0.0}
+      else {
+        (radius.powi(2) - distance.powi(2)).sqrt()
+      };
+
+      let mut p1 = dot_on_ray.offset(&ray.normal, d);
+      let mut p2 = dot_on_ray.offset(&ray.normal, -d);
+
+      // check the intersection points are inside the cylinder side(roll) surface
+      if p1.y < roll_center.y - height.half() || p1.y > roll_center.y + height.half() {p1 = Dot::maximum()}
+      if p2.y < roll_center.y - height.half() || p2.y > roll_center.y + height.half() {p2 = Dot::maximum()}
+
+      // check the intersection points are in the ray direction
+      if !p1.is_above(ray) {p1 = Dot::maximum()}
+      if !p2.is_above(ray) {p2 = Dot::maximum()}
+
+      // choose the nearest intersection point
+      if p1.d_dot(&ray.origin) < nearest_intersection.d_dot(&ray.origin) {nearest_intersection = p1.same()}
+      if p2.d_dot(&ray.origin) < nearest_intersection.d_dot(&ray.origin) {nearest_intersection = p2.same()}
+      
+    }
+  
+
+    nearest_intersection
 
   }
 
