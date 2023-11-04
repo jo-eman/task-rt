@@ -106,7 +106,7 @@ impl Scene {
             good_to_trace,
           );
         }
-        Objects::Roll { color, position, radius, height, } => {
+        Objects::Roll { .. } => {
           (rgb,nearest_position) =
           self.check_roll(
             rgb,
