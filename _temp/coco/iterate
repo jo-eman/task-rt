@@ -1,0 +1,34 @@
+// Assume `objects` is a vector of `Object` enums
+for object in objects {
+    match object {
+        Object::Sphere {
+            color,
+            position,
+            radius,
+        } => {
+            // Perform calculations for sphere
+            // `color`, `position`, and `radius` are available as variables
+        }
+        Object::Cube {
+            color,
+            position,
+            size,
+        } => {
+            // Perform calculations for cube
+            // `color`, `position`, and `size` are available as variables
+        }
+        Object::Roll {
+            color,
+            position,
+            radius,
+            height,
+        } => {
+            // Perform calculations for roll
+            // `color`, `position`, `radius`, and `height` are available as variables
+        }
+        Object::Flat { color, position, normal } => {
+            // Perform calculations for flat
+            // `color`, `position` and `normal` are available as variables
+        }
+    }
+}

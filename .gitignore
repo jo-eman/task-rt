@@ -14,3 +14,15 @@ Cargo.lock
 *.pdb
 
 .DS_Store
+
+# ignore vscode settings
+.vscode/
+
+# ignore folder includes output image after trace
+ppm/
+
+# ignore executable copied from release folder to root level
+we
+
+# ignore debug output
+debug.txt
