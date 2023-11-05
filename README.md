@@ -15,7 +15,7 @@ The order of the files in terminal command is important.
 **Only ONE camera , ONE light, and multiple objects are allowed on scene.**
 To create scene, create files with description of camera, light and objects.  
 Then use them as arguments of the program.  
-**Name all the files without extention.**
+**Name all files without extension.**
 
 ## Example
 ```
