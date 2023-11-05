@@ -1,4 +1,4 @@
-# a point light custom implementation of brightness control
+# a point light custom implementation with brightness control
 
 power 2000
 color 255 255 255
