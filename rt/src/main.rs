@@ -13,6 +13,7 @@ mod tracer {
   pub mod pixel_;
   pub mod pixel_mat;
   pub mod pixel_ball;
+  pub mod pixel_box;
   pub mod scene;
   pub mod trace;
 }
