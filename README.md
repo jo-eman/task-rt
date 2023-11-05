@@ -53,6 +53,9 @@ Then use them as arguments of the program.
 # Do not know how to check it? Use example from this file.
 # Otherwise, do not expect the correct result.
 
+# To move the camera and rotate it, just change the camera position.  
+# Direction will be the same, so camera will be rotated.
+
 800 600 output
 zoom 1500
 from 0 300 300
