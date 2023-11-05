@@ -1,4 +1,11 @@
-use crate::{parser::objects_file::Objects, gem::{dot::Dot, mat::Mat, gem::Gem, spear::Spear}};
+use crate::{
+  parser::objects_file::Objects,
+  gem::{
+    dot::Dot, mat::Mat,
+    gem::Gem, utils::F64xyz,
+    spear::Spear
+  }
+};
 
 use super::scene::Scene;
 
@@ -6,11 +13,12 @@ pub struct RGB {
   pub r: u8,
   pub g: u8,
   pub b: u8,
+  pub fresh: bool,
 }
 
 impl RGB {
   pub fn new(r: u8, g: u8, b: u8) -> RGB {
-    RGB { r, g, b }
+    RGB { r, g, b, fresh: true }
   }
   
   pub fn from_array(array: &[u8; 3]) -> RGB {
@@ -29,10 +37,18 @@ impl RGB {
   
   /// decrease the color brightness to represent the back side of the object
   /// 
-  /// just division by the dark factor, hardcoded into method (not a real simulation of the light)
+  /// just division by the dark factor,
+  /// hardcoded into method (not a real simulation of the light)
+  ///   
+  /// FIRES ONLY ONCE, ON FRESH CREATED COLOR,
+  /// after that, the same color is returned
   pub fn dark_side(&self) -> RGB {
+    if self.fresh{
     let dark = 2;
-    RGB::new(self.r / dark, self.g / dark, self.b / dark)
+    let mut rgb = RGB::new(self.r / dark, self.g / dark, self.b / dark);
+    rgb.fresh = false;
+    rgb
+    } else {self.same()}
   }
   
   /// crete color affected by the light power (simple simulation, not a proper one)
@@ -213,6 +229,28 @@ impl Scene {
 
   }
   
+  /// check the hit point is on the dark side of the ball
+  fn is_ball_dark_side(
+    camera_ray_hit_xyz: Dot,
+    light_position: Dot,
+    center: Dot,
+    radius: f64,
+  ) -> bool {
+    let light_ray = Mat::new(
+      light_position,
+      Spear::pp(
+        &[
+          light_position,
+          camera_ray_hit_xyz,
+        ]
+      )
+    );
+    let light_xyz = Gem::ray_x_ball(&light_ray, &center, radius);
+    
+    light_xyz.d_dot(&light_position) < f64::Z9X9 * camera_ray_hit_xyz.d_dot(&light_position)
+
+  }
+
   fn check_ball(
     &self,
     old_color: RGB,
@@ -232,14 +270,23 @@ impl Scene {
       Objects::Ball { color, position, radius } => {
         let center = Dot::from_array(position);
         let xyz = Gem::ray_x_ball(&ray, &center, radius);
+
+        let mut rgb = RGB::power_affected(
+          color,
+          xyz,
+          light_position,
+          RGB::from_array(&self.light.color),
+          self.light.power
+        );
+
+        //todo: here probably not bad place to try precheck the dark side
+        
+        if rgb.fresh
+        && Scene::is_ball_dark_side( xyz, light_position, center, radius, )
+         {rgb = rgb.dark_side();}
+
         (
-          RGB::power_affected(
-            color,
-            xyz,
-            light_position,
-            RGB::from_array(&self.light.color),
-            self.light.power
-          ),
+          rgb,
           xyz
         )
         
@@ -299,6 +346,28 @@ impl Scene {
 
   }
   
+  /// check the hit point is on the dark side of the box
+  fn is_box_dark_side(
+    camera_ray_hit_xyz: Dot,
+    light_position: Dot,
+    center: Dot,
+    size: f64,
+  ) -> bool {
+
+    let light_ray = Mat::new(
+      light_position,
+      Spear::pp(
+        &[
+          light_position,
+          camera_ray_hit_xyz,
+        ]
+      ),
+    );
+    let light_xyz = Gem::ray_x_box(&light_ray, &center, size);
+
+    light_xyz.d_dot(&light_position) < f64::Z9X9 * camera_ray_hit_xyz.d_dot(&light_position)
+  }
+
   fn check_box(
     &self,
     old_color: RGB,
@@ -318,14 +387,20 @@ impl Scene {
       Objects::Box { color, position, size } => {
         let center = Dot::from_array(position);
         let xyz = Gem::ray_x_box(&ray, &center, size);
+        let mut rgb = RGB::power_affected(
+          color,
+          xyz,
+          light_position,
+          RGB::from_array(&self.light.color),
+          self.light.power
+        );
+
+        if rgb.fresh
+        && Scene::is_box_dark_side( xyz, light_position, center, size, )
+        {rgb = rgb.dark_side();}
+        
         (
-          RGB::power_affected(
-            color,
-            xyz,
-            light_position,
-            RGB::from_array(&self.light.color),
-            self.light.power
-          ),
+          rgb,
           xyz
         )
         
@@ -385,6 +460,30 @@ impl Scene {
 
   }
   
+  /// check the hit point is on the dark side of the roll
+  fn is_roll_dark_side(
+    camera_ray_hit_xyz: Dot,
+    light_position: Dot,
+    center: Dot,
+    radius: f64,
+    height: f64,
+  ) -> bool {
+
+    let light_ray = Mat::new(
+      light_position,
+      Spear::pp(
+        &[
+          light_position,
+          camera_ray_hit_xyz,
+        ]
+      ),
+    );
+    let light_xyz = Gem::ray_x_roll(&light_ray, &center, radius, height);
+
+    light_xyz.d_dot(&light_position) < f64::Z9X9 * camera_ray_hit_xyz.d_dot(&light_position)
+
+  }
+
   fn check_roll(
     &self,
     old_color: RGB,
@@ -404,14 +503,20 @@ impl Scene {
       Objects::Roll { color, position, radius, height } => {
         let center = Dot::from_array(position);
         let xyz = Gem::ray_x_roll(&ray, &center, radius, height);
+        let mut rgb = RGB::power_affected(
+          color,
+          xyz,
+          light_position,
+          RGB::from_array(&self.light.color),
+          self.light.power
+        );
+
+        if rgb.fresh
+        && Scene::is_roll_dark_side( xyz, light_position, center, radius, height, )
+        {rgb = rgb.dark_side();}
+
         (
-          RGB::power_affected(
-            color,
-            xyz,
-            light_position,
-            RGB::from_array(&self.light.color),
-            self.light.power
-          ),
+          rgb,
           xyz
         )
         

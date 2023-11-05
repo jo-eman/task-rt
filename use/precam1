@@ -1,0 +1,8 @@
+# camera file to render objects placed on scene
+
+# result image width in pixels, height in pixels, output file name
+800 800 pre
+zoom 1500
+from 0 100 300
+to 0 0 0
+up 0 1 0
