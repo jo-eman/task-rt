@@ -1,9 +1,9 @@
 # Task "rt"
 grit:lab Åland Islands 2023
 
-<div style="text-align:center;">
+<p align="center">
     <img src="x5.png" alt="five objects" width="400"/>
-</div>
+</p>
 
 ## Build
 ```
