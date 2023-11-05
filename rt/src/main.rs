@@ -14,6 +14,7 @@ mod tracer {
   pub mod pixel_mat;
   pub mod pixel_ball;
   pub mod pixel_box;
+  pub mod pixel_roll;
   pub mod scene;
   pub mod trace;
 }
