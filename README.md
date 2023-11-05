@@ -116,8 +116,6 @@ from 300 400 500
 # - [coordinates] - x y z coordinates of the origin position of the plane.
 # - [normal vector coordinates] - x y z coordinates of the end of the normal vector of the plane(vector will be started from zero point of the global coordinates).
 
-
-# mat: color, coordinates, normal vector coordinates(started from zero point of the global coordinates). It is like short name of the flat plane with color
 255 255 0 ball 0 0 5 2
 0 255 255 box 0 0 0 2
 255 0 255 roll 0 0 0 2 2
