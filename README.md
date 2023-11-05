@@ -1,7 +1,7 @@
 # Task "rt"
 grit:lab Åland Islands 2023
 
-![five objects](x5.png)
+<img src="x5.png" alt="five objects" width="400"/>
 
 ## Build
 ```
