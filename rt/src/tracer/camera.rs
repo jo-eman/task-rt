@@ -1,4 +1,4 @@
-use crate::gem::{spear::Spear, dot::Dot, mat::Mat};
+use crate::gem::{spear::Spear, dot::{Dot, self}, mat::Mat};
 
 use super::scene::Scene;
 
@@ -20,17 +20,20 @@ impl Scene {
   /// vector of the up direction of the camera
   pub fn camera_up_vector(&self) -> Spear {
     let camera = &self.camera;
-    let from = Dot::from_array(camera.position);
-    let to = Dot::from_array(camera.up);
+    let cv = self.camera_vector();
+    let position = Dot::from_array(camera.position);
+    let end_of_up_direction = Dot::from_array(camera.up);
+    let mut cuv = Spear::pp(&[position, end_of_up_direction]);
 
-    let mut cuv = Spear::pp(&[from, to]);
-    
     // check if the vector is zero or parallel to camera vector,
     // then increase the y component by 1.0, to make y the up direction
-    let cv = self.camera_vector();
     if cuv.is_zero() || cuv.is_ll(&cv) { cuv.y += 1.0; }
-    // now double calculate the normal vector, to make it perpendicular to the camera vector
     
+    // now double calculate the normal vector,
+    // to make it perpendicular to the camera vector
+    // first, inside brackets, it calculates the left camera direction vecotor
+    // second, outside brackets, it recalculates the normal vector again
+    // after that it is perpendicular to both camera vector and camera left vector
     cv.normal(&cuv.normal(&cv))
   }
 

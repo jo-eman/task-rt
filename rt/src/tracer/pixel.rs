@@ -46,14 +46,16 @@ impl RGB {
     let mut rgb = RGB::from_array(&rgb);
     let distance = color_position.d_dot(&light_source_position);
     if distance < light_power_distance {
-      let power = (light_power_distance - distance) / light_power_distance;
+      let power_coef =
+      (light_power_distance - distance) / light_power_distance;
+      
       let shade_r = light_color.r as f64 / 255_f64;
       let shade_g = light_color.g as f64 / 255_f64;
       let shade_b = light_color.b as f64 / 255_f64;
       
-      rgb.r = (rgb.r as f64 * power * shade_r) as u8;
-      rgb.g = (rgb.g as f64 * power * shade_g) as u8;
-      rgb.b = (rgb.b as f64 * power * shade_b) as u8;
+      rgb.r = (rgb.r as f64 * power_coef * shade_r) as u8;
+      rgb.g = (rgb.g as f64 * power_coef * shade_g) as u8;
+      rgb.b = (rgb.b as f64 * power_coef * shade_b) as u8;
       
       rgb
     } else { RGB::background() }
@@ -139,11 +141,11 @@ impl Scene {
     let other_objects:Vec<Objects> = good_to_trace.iter().enumerate().filter(|(i, _)| *i != index).map(|(_, o)| o.clone()).collect();
     
     // find the object intersection point and color, or set color to background, and intersection to must far point, to avoid any rust "magic"
-    let (mut obj_pixel_color, mut obj_pixel_position) = match object {
+    let (obj_pixel_color, obj_pixel_position) = match object {
       Objects::Mat { color, position, normal } => {
         let mat_origin = Dot::from_array(position);
         let mat_normal = Spear::from_array(normal);
-        let xyz = Gem::line_x_mat(&ray, &Mat::new(mat_origin, mat_normal));
+        let xyz = Gem::ray_x_mat(&ray, &Mat::new(mat_origin, mat_normal));
         (
           RGB::power_affected(
             color,
@@ -182,23 +184,23 @@ impl Scene {
     
     for object in other_objects {
       match object {
-        Objects::Mat { color, position, normal } => {
+        Objects::Mat { position, normal, .. } => {
           let mat_origin = Dot::from_array(position);
           let mat_normal = Spear::from_array(normal);
-          let xyz = Gem::line_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
+          let xyz = Gem::ray_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Ball { color, position, radius } => {
+        Objects::Ball { position, radius, .. } => {
           let ball_center = Dot::from_array(position);
           let xyz = Gem::ray_x_ball(&ray_to_light, &ball_center, radius);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Box { color, position, size } => {
+        Objects::Box { position, size, .. } => {
           let box_center = Dot::from_array(position);
           let xyz = Gem::ray_x_box(&ray_to_light, &box_center, size);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Roll { color, position, radius, height } => {
+        Objects::Roll { position, radius, height, .. } => {
           let roll_center = Dot::from_array(position);
           let xyz = Gem::ray_x_roll(&ray_to_light, &roll_center, radius, height);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
@@ -226,7 +228,7 @@ impl Scene {
     let other_objects:Vec<Objects> = good_to_trace.iter().enumerate().filter(|(i, _)| *i != index).map(|(_, o)| o.clone()).collect();
     
     // find the object intersection point and color, or set color to background, and intersection to must far point, to avoid any rust "magic"
-    let (mut obj_pixel_color, mut obj_pixel_position) = match object {
+    let (obj_pixel_color, obj_pixel_position) = match object {
       Objects::Ball { color, position, radius } => {
         let center = Dot::from_array(position);
         let xyz = Gem::ray_x_ball(&ray, &center, radius);
@@ -268,23 +270,23 @@ impl Scene {
     
     for object in other_objects {
       match object {
-        Objects::Mat { color, position, normal } => {
+        Objects::Mat { position, normal, .. } => {
           let mat_origin = Dot::from_array(position);
           let mat_normal = Spear::from_array(normal);
-          let xyz = Gem::line_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
+          let xyz = Gem::ray_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Ball { color, position, radius } => {
+        Objects::Ball { position, radius, .. } => {
           let ball_center = Dot::from_array(position);
           let xyz = Gem::ray_x_ball(&ray_to_light, &ball_center, radius);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Box { color, position, size } => {
+        Objects::Box { position, size, .. } => {
           let box_center = Dot::from_array(position);
           let xyz = Gem::ray_x_box(&ray_to_light, &box_center, size);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Roll { color, position, radius, height } => {
+        Objects::Roll { position, radius, height, .. } => {
           let roll_center = Dot::from_array(position);
           let xyz = Gem::ray_x_roll(&ray_to_light, &roll_center, radius, height);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
@@ -312,7 +314,7 @@ impl Scene {
     let other_objects:Vec<Objects> = good_to_trace.iter().enumerate().filter(|(i, _)| *i != index).map(|(_, o)| o.clone()).collect();
     
     // find the object intersection point and color, or set color to background, and intersection to must far point, to avoid any rust "magic"
-    let (mut obj_pixel_color, mut obj_pixel_position) = match object {
+    let (obj_pixel_color, obj_pixel_position) = match object {
       Objects::Box { color, position, size } => {
         let center = Dot::from_array(position);
         let xyz = Gem::ray_x_box(&ray, &center, size);
@@ -354,23 +356,23 @@ impl Scene {
     
     for object in other_objects {
       match object {
-        Objects::Mat { color, position, normal } => {
+        Objects::Mat { position, normal, .. } => {
           let mat_origin = Dot::from_array(position);
           let mat_normal = Spear::from_array(normal);
-          let xyz = Gem::line_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
+          let xyz = Gem::ray_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Ball { color, position, radius } => {
+        Objects::Ball { position, radius, .. } => {
           let ball_center = Dot::from_array(position);
           let xyz = Gem::ray_x_ball(&ray_to_light, &ball_center, radius);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Box { color, position, size } => {
+        Objects::Box { position, size, .. } => {
           let box_center = Dot::from_array(position);
           let xyz = Gem::ray_x_box(&ray_to_light, &box_center, size);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Roll { color, position, radius, height } => {
+        Objects::Roll { position, radius, height, .. } => {
           let roll_center = Dot::from_array(position);
           let xyz = Gem::ray_x_roll(&ray_to_light, &roll_center, radius, height);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
@@ -398,7 +400,7 @@ impl Scene {
     let other_objects:Vec<Objects> = good_to_trace.iter().enumerate().filter(|(i, _)| *i != index).map(|(_, o)| o.clone()).collect();
     
     // find the object intersection point and color, or set color to background, and intersection to must far point, to avoid any rust "magic"
-    let (mut obj_pixel_color, mut obj_pixel_position) = match object {
+    let (obj_pixel_color, obj_pixel_position) = match object {
       Objects::Roll { color, position, radius, height } => {
         let center = Dot::from_array(position);
         let xyz = Gem::ray_x_roll(&ray, &center, radius, height);
@@ -440,23 +442,23 @@ impl Scene {
     
     for object in other_objects {
       match object {
-        Objects::Mat { color, position, normal } => {
+        Objects::Mat { position, normal, .. } => {
           let mat_origin = Dot::from_array(position);
           let mat_normal = Spear::from_array(normal);
-          let xyz = Gem::line_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
+          let xyz = Gem::ray_x_mat(&ray_to_light, &Mat::new(mat_origin, mat_normal));
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Ball { color, position, radius } => {
+        Objects::Ball { position, radius, .. } => {
           let ball_center = Dot::from_array(position);
           let xyz = Gem::ray_x_ball(&ray_to_light, &ball_center, radius);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Box { color, position, size } => {
+        Objects::Box { position, size, .. } => {
           let box_center = Dot::from_array(position);
           let xyz = Gem::ray_x_box(&ray_to_light, &box_center, size);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}
         }
-        Objects::Roll { color, position, radius, height } => {
+        Objects::Roll { position, radius, height, .. } => {
           let roll_center = Dot::from_array(position);
           let xyz = Gem::ray_x_roll(&ray_to_light, &roll_center, radius, height);
           if xyz.d_dot(&light_position) < obj_pixel_position.d_dot(&light_position) {pixel_color = pixel_color.dark_side(); break;}

@@ -65,13 +65,13 @@ impl Mat {
   
   /// check the plane is below the other plane (along the other plane normal direction)
   pub fn is_below(&self, o: &Mat) -> bool {
-    todo!("Mat::is_below()" );
-    
+    self.origin.is_below(o)
+
   }
   
   /// check the plane is above the other plane (along the other plane normal direction)
   pub fn is_above(&self, o: &Mat) -> bool {
-    todo!("Mat::is_above()");
+    self.origin.is_above(o)
     
   }
   
@@ -82,7 +82,7 @@ impl Mat {
     self.c * o.d == o.c * self.d
   }
 
-  /// distance between planes.
+  /// minimal distance to other plane
   /// Set zero if planes are not parallel. Because i want it.
   fn d_mat(&self, o: &Mat) -> f64 {
     if self.is_ll(o) {

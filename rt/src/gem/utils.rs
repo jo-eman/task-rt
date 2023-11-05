@@ -34,6 +34,14 @@ impl Gem {
 
   }
 
+  /// extend line_x_mat to ray_x_mat.
+  /// By checking the ray direction of hit point non-negative along the ray vector.
+  pub fn ray_x_mat(ray: &Mat, mat: &Mat) -> Dot {
+    let hit = Gem::line_x_mat(ray, mat);
+    if hit.is_maximum() || hit.is_below(ray) {return Dot::maximum()}
+    else {hit}
+  }
+
   /// intersection of ray and sphere.
   /// 
   /// The first one from ray origin, to forward direction, along the ray vector.
