@@ -56,9 +56,9 @@ Then use them as arguments of the program.
 # To move the camera and rotate it, just change the camera position.  
 # Direction will be the same, so camera will be rotated.
 
-800 600 output
+800 600 pre
 zoom 1500
-from 0 300 300
+from 0 100 300
 to 0 0 0
 up 0 1 0
 ```
@@ -78,7 +78,7 @@ up 0 1 0
 
 power 2000
 color 255 255 255
-from 300 400 500
+from 0 400 -200
 
 ```
 
@@ -119,10 +119,11 @@ from 300 400 500
 # - [coordinates] - x y z coordinates of the origin position of the plane.
 # - [normal vector coordinates] - x y z coordinates of the end of the normal vector of the plane(vector will be started from zero point of the global coordinates).
 
-255 255 0 ball 0 0 5 2
-0 255 255 box 0 0 0 2
-255 0 255 roll 0 0 0 2 2
-0 255 0 mat 0 0 0 0 0 1
+0 0 255 mat 0 0 0 0 100 0
+0 255 0 ball 250 150 150 10
+255 255 0 ball 10 120 25 100
+200 255 255 box 250 50 25 100
+255 0 255 roll -120 110 20 100 200
 ```
 
 ## Description
