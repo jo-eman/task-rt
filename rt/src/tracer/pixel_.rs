@@ -101,7 +101,6 @@ impl Scene {
             good_to_trace,
           );
         }
-        //todo: implement
         Objects::Ball { .. } => {
           (rgb,nearest_position) =
           self.check_ball(

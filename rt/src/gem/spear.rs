@@ -131,7 +131,6 @@ impl Spear {
     self.is_same(other) || self.is_back(other)
   }
   
-  //todo: not sure about this
   /// check the vector is equal
   pub fn is_eq(&self, other: &Spear) -> bool {
     self.x == other.x && self.y == other.y && self.z == other.z
