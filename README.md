@@ -1,6 +1,8 @@
 # Task "rt"
 grit:lab Åland Islands 2023
 
+![five objects](x5.png)
+
 ## Build
 ```
 ./do
