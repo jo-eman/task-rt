@@ -13,6 +13,9 @@ grit:lab Åland Islands 2023
 **ONE camera file, ONE light file and ONE objects file are required condition.**  
 The order of the files in terminal command is important.  
 **Only ONE camera , ONE light, and multiple objects are allowed on scene.**
+To create scene, create files with description of camera, light and objects.  
+Then use them as arguments of the program.  
+**Name all the files without extention.**
 
 ## Example
 ```
