@@ -10,7 +10,8 @@ mod parser {
 mod tracer {
   pub mod camera;
   pub mod check;
-  pub mod pixel;
+  pub mod pixel_;
+  pub mod pixel_mat;
   pub mod scene;
   pub mod trace;
 }
