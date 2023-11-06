@@ -97,7 +97,7 @@ impl Camera {
             ));
           }
           output_file_name = words[2].to_string();
-          if !output_file_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+          if !output_file_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '.') {
             return Err("Output file name must contain only English letters, Arabic numbers, and underscores".to_string());
           }
           output_parsed = true;

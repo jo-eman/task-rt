@@ -1,6 +1,6 @@
 # camera file to render objects placed on scene
 
-800 600 audit4
+800 600 audit4.ppm
 zoom 1500
 from 300 300 300
 to 0 0 0
