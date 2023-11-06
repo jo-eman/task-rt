@@ -1,0 +1,4 @@
+# objects file to place on scene
+
+0 0 255 mat 0 0 0 0 100 0
+200 255 255 box 250 50 25 100

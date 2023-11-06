@@ -26,6 +26,13 @@ Then use them as arguments of the program.
 ./we use/camera1 use/light1 use/objects1
 ```
 
+To create x4 images(required in the task description and audit) run in terminal:
+```
+./audit
+```
+Script works about 20 seconds.  
+Result will be placed in `ppm` folder.  
+
 ## Camera file example . The comments after `#` are ignored
 ```
 # the "800 600 output_file" is result image:

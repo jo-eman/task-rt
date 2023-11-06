@@ -1,0 +1,5 @@
+# a point light custom implementation with brightness control
+
+power 2000
+color 155 155 155
+from 300 400 500

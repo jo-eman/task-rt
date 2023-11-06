@@ -1,0 +1,10 @@
+# the shell script to prepare pictures as task required
+# tracer works fast, so no problem to recreate pictures instead of keep them in repo
+
+./we use/audcam1 use/audlamp1 use/audobj1
+
+./we use/audcam2 use/audlamp2 use/audobj2
+
+./we use/audcam3 use/audlamp3 use/audobj3
+
+./we use/audcam4 use/audlamp4 use/audobj4
