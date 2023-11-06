@@ -67,7 +67,7 @@ Result will be placed in `ppm` folder.
 # To move the camera and rotate it, just change the camera position.  
 # Direction will be the same, so camera will be rotated.
 
-800 600 pre
+800 600 output
 zoom 1500
 from 0 100 300
 to 0 0 0
