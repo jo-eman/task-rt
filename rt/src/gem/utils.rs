@@ -256,8 +256,15 @@ impl Gem {
       // the cylinder side(roll) surface
       let dot_on_ray = dot_on_cylinder_axis.p_mat(&ray_mat_ll_cylinder_axis);
 
-      // the distance to offset the dot_on_ray(in two directions), to get the intersection point
-      let d =  (radius.powi(2) - distance.powi(2)).sqrt();
+      // the mutliplifier distance. when the ray and roll_axis are not perpendicular.
+      // can be negative, but this only revert the order of -d and d usage in offset method bottom
+      let coef =  ray.normal.cos(&roll_axis).acos().sin();
+      
+      // the distance to offset the dot_on_ray(in two directions), to get the intersection point.
+      // Additionally limited by ".xyz()", to manage zero coef without brainfuck
+      let d = (
+        ((radius).powi(2) - distance.powi(2)).sqrt()/coef
+      ).xyz();
 
       let mut p1 = dot_on_ray.offset(&ray.normal, d);
       let mut p2 = dot_on_ray.offset(&ray.normal, -d);

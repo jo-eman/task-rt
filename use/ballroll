@@ -1,0 +1,5 @@
+# objects file to test roll
+
+
+255 255 0 ball 0 -100 0 101
+255 0 255 roll 0 -100 0 100 200
