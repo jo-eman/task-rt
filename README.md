@@ -137,8 +137,23 @@ from 0 400 -200
 255 0 255 roll -120 110 20 100 200
 ```
 
+## Performance refactor notes
+```
+
+# The rayon par_iter multithreading performance refactor does not significantly improve performance under this projects normal requirement of rendering 4 objects.
+# However if you render the new file with 74 objects 
+
+# ./rt use/audcam4 use/audlamp4 use/manyobj
+
+
+The multithread version renders 3x faster (ca 20sek vs ca 1min for the original version on my system)
+
+Feel free to try it out on your system, compare it to original version, measure it, point out any areas of improvement, and make it even better.
+```
+
 ## Description
 https://github.com/01-edu/public/tree/master/subjects/rt
 
 ## Authors
 - [healingdrawing](https://healingdrawing.github.io)
+- [joman](https://github.com/jo-eman)
